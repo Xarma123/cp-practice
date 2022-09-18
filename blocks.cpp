@@ -1,0 +1,2 @@
+#include<iostream>#include<vector>#include<algorithm>usingnamespacestd;boolcompare(lol a,lol b){return a>b;}lolmain(){vector<lol> v;    v.reserve(100);lol n;cin>>n;
+for(lol i=0;i<n;i++){lol temp;cin>>temp;        v.push_back(temp);    }    v.pop_back();//v.clear();cout<<v.capacity()<<endl;    sort(v.begin(),v.end(),compare);//Prlol thesefor(lol i=0;i<v.size();i++){cout<<v[i]<<" ";    }cout<<v.max_size()<<endl;return0;}

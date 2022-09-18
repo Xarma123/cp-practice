@@ -1,0 +1,8 @@
+*.exe
+.catalyst/
+.cph/
+.hack/
+.vs/
+.vscode/
+en/
+*.bin
