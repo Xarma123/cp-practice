@@ -19,12 +19,13 @@ int main()
 
         if (n % j == 0)
         {
+
             lol i;
-            for (i = 0; i < j; i++)
+            for (i = 0; i < n / j; i++)
             {
                 bool f = true;
                 lol c = 0;
-                for (lol k = i; c < j; k += (n - j) / j + 1)
+                for (lol k = i; c < j; k += n / j)
                 {
                     k %= n;
                     c++;
@@ -34,19 +35,20 @@ int main()
                 if (f)
                     break;
             }
-            if (i != j)
+            if (i != n / j && j != 1 && j != 2)
             {
+
                 ans = true;
                 break;
             }
             if (n / j != j)
             {
                 lol J = n / j;
-                for (i = 0; i < J; i++)
+                for (i = 0; i < n / J; i++)
                 {
                     bool f = true;
                     lol c = 0;
-                    for (lol k = i; c < J; k += (n - J) / J + 1)
+                    for (lol k = i; c < J; k += n / J)
                     {
                         k %= n;
                         c++;
@@ -56,8 +58,9 @@ int main()
                     if (f)
                         break;
                 }
-                if (i != J)
+                if (i != n / J && J != 1 && J != 2)
                 {
+
                     ans = true;
                     break;
                 }
