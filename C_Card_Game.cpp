@@ -20,7 +20,7 @@ lol loss(lol n)
     if (l.count(n))
         return l[n];
     if (n == 0)
-        return 0; 
+        return 0;
     return l[n] = ((ncr[n][n / 2] - win(n) - 1 + m) % m);
 }
 int main()
