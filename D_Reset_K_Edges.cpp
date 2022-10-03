@@ -1,6 +1,45 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
+map<lol, vector<lol>> tree;
+lol k;
+lol q;
+lol h(lol p, lol c)
+{
+    lol v = 0;
+    for (auto e : tree[c])
+    {
+        if (e != p)
+        {
+            v = max(v, h(c, e));
+        }
+    }
+    return v + 1;
+}
+lol dfs(lol p, lol c, lol mn)
+{
+    lol v = 0;
+    for (auto e : tree[c])
+    {
+        if (e != p)
+        {
+            v = max(v, dfs(c, e, mn));
+        }
+    }
+    if (v + 1 == mn - 1 && p != 1&&p!=-1)
+    {
+        q++;
+        return 0;
+    }
+    return v + 1;
+}
+bool check(lol mn)
+{
+    q = 0;
+    dfs(-1, 1, mn);
+   
+    return q <= k;
+}
 int main()
 {
     std::ios::sync_with_stdio(false);
@@ -10,9 +49,9 @@ int main()
     cin >> t;
     while (t--)
     {
-        lol n, k;
+        lol n;
         cin >> n >> k;
-        map<lol, vector<lol>> tree;
+        tree.clear();
         for (lol i = 0; i < n - 1; i++)
         {
             lol v;
@@ -21,50 +60,24 @@ int main()
             tree[i + 2].push_back(v);
             tree[v].push_back(i + 2);
         }
-        bool vis[n + 1];
-        memset(vis, false, sizeof(vis));
-        map<lol, lol> lev;
-        lol d = 0;
-        queue<lol> q;
-        q.push(1);
-        vis[1] = true;
-        while (!q.empty())
+        lol s = 0, e = h(-1, 1);
+
+        while (s != e - 1)
         {
-            lev[d] = q.size();
-            lol c = q.size();
-            while (c--)
+            lol m = (s + e) / 2;
+            if (m <= 1)
             {
-                lol top = q.front();
-                q.pop();
-                for (auto e : tree[top])
-                {
-                    if (!vis[e])
-                    {
-                        vis[e] = true;
-                        q.push(e);
-                    }
-                }
+                s = m;
             }
-            d--;
-        }
-
-        lol tot = 0;
-        lol ans;
-        for (auto e : lev)
-        {
-
-            if (tot + e.second > k || e.first == -1)
+            else if (check(m))
             {
-
-                ans = -e.first;
-                break;
+                e = m;
             }
             else
-            {
-                tot += e.second;
-            }
+                s = m;
+           
         }
-        cout << max(ans << endl;
+         cout << e - 1 << endl;
     }
 
     return 0;
