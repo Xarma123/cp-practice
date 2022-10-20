@@ -1,7 +1,38 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
-vector<lol> z;
+vector<string> ans;
+map<char, vector<char>> mp;
+map<char, lol> ind;
+bool dfs(vector<char> q, string s)
+{
+    if (q.size() == 0)
+    {
+        ans.push_back(s);
+        return true;
+    }
+    for (lol i = 0; i < q.size(); i++)
+    {
+        vector<char> q2 = q;
+        q2.erase((q2.begin() + i));
+        for (auto neh : mp[q[i]])
+        {
+            ind[neh]--;
+            if (ind[neh] == 0)
+                q2.push_back(neh);
+            if (ind[neh] == -1)
+                return false;
+        }
+        string s2 = s;
+        s2 = s2 + " ";
+        s2.push_back(q[i]);
+        if (!dfs(q2, s2))
+            return false;
+        for (auto neh : mp[q[i]])
+            ind[neh]++;
+    }
+    return true;
+}
 int main()
 {
     std::ios::sync_with_stdio(false);
@@ -9,23 +40,24 @@ int main()
     cout.tie(NULL);
     lol t;
     cin >> t;
+    getchar();
     while (t--)
     {
-        cin.ignore();
-        cin.ignore();
+        getchar();
+        ans.clear();
+        ind.clear();
         string s;
         getline(cin, s);
-
+        mp.clear();
         stringstream ss(s);
         char c;
-        map<char, vector<char>> mp;
+
         while (ss >> c)
         {
             mp[c] = {};
         }
         getline(cin, s);
-        cout << s << endl;
-        map<char, lol> ind;
+
         stringstream s1s(s);
         string q;
         while (s1s >> q)
@@ -42,19 +74,25 @@ int main()
                 mp[q[0]].push_back(q[2]);
             }
         }
-
+        vector<char> z;
         for (auto c : mp)
         {
             if (ind[c.first] == 0)
             {
+
                 z.push_back(c.first);
             }
         }
-        for (auto e : z)
-        {
-            
-        }
-    }
 
+        if (dfs(z, ""))
+        {
+            for (auto s : ans)
+                cout << s.substr(1) << endl;
+        }
+        else
+        {
+            cout << "NO" << endl;
+        } 
+    }
     return 0;
 }

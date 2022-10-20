@@ -3,44 +3,47 @@
 using namespace std;
 int main()
 {
-    lol t;
-    cin >> t;
-    while (t--)
+
+    lol n;
+    cin >> n;
+    if (n == 1)
     {
-        lol n;
-        cin >> n;
-        vector<lol> x;
-        map<lol, lol> mp;
-        for (lol i = 0; i < n; i++)
+        cout << 1 << endl;
+    }
+    else if (n == 2)
+    {
+        cout << 1 << " " << 2 << endl;
+    }
+    else if (n == 3)
+    {
+        cout << 1 << " " << 1 << " " << 3 << endl;
+    }
+    else if (n == 4)
+    {
+        cout << "1 1 2 4" << endl;
+    }
+    else if (n == 5)
+    {
+        cout << "1 1 1 2 4" << endl;
+    }
+    else
+    {
+        lol c = 1;
+        while (n > 3)
         {
-            lol q;
-            cin >> q;
-            if (x.size() == 0)
+            for (lol i = 0; i < n - (n / 2); i++)
             {
-                x.push_back(q);
-                mp[q]++;
+                cout << c << " ";
             }
-            else if (x.back() != q)
-            {
-                x.push_back(q);
-                mp[q]++;
-            }
+            n /= 2;
+            c *= 2;
         }
-        lol ans = LONG_LONG_MAX;
-        for (auto i = mp.begin(); i != mp.end(); i++)
-        {
-
-            ((*i).second)++;
-        }
-
-        mp[x[0]]--;
-        mp[x[x.size() - 1]]--;
-        for (auto i = mp.begin(); i != mp.end(); i++)
-        {
-
-            ans = min(((*i).second), ans);
-        }
-        cout << ans << endl;
+        if (n == 3)
+            cout << c << " " << c << " " << 3 * c << endl;
+        else if (n == 2)
+            cout << c << " " << 2 * 1ll * c << endl;
+        else
+            cout << c << endl;
     }
 
     return 0;

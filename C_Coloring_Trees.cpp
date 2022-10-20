@@ -6,119 +6,128 @@ int main()
     std::ios::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    lol n, m, K;
-    cin >> n >> m >> K;
+    lol n, m, k;
+    cin >> n >> m >> k;
     lol c[n];
     for (lol i = 0; i < n; i++)
     {
         cin >> c[i];
+        c[i]--;
     }
-    lol p[n][m];
+    lol paint[n][m];
     for (lol i = 0; i < n; i++)
     {
         for (lol j = 0; j < m; j++)
         {
-            cin >> p[i][j];
+            cin >> paint[i][j];
         }
     }
-    lol dp[n + 1][m][K + 1];
-    vector<pair<lol, lol>> pre;
-    for (lol i = 0; i <= n; i++)
+    lol dp[n][k][m];
+    for (lol i = 0; i < n; i++)
     {
-
+        for (lol j = 0; j < k; j++)
+        {
+            for (lol k1 = 0; k1 < m; k1++)
+            {
+                dp[i][j][k1] = LONG_LONG_MAX;
+            }
+        }
+    }
+    if (c[0] == -1)
+    {
+        for (lol i = 0; i < m; i++)
+        {
+            dp[0][0][i] = paint[0][i];
+        }
+    }
+    else
+    {
+        dp[0][0][c[0]] = 0;
+    }
+    pair<lol, lol> t[k];
+    for (lol i = 0; i < k; i++)
+    {
+        lol l = LONG_LONG_MAX;
+        lol r = LONG_LONG_MAX;
         for (lol j = 0; j < m; j++)
         {
-
-            for (lol k = 0; k <= K; k++)
+            if (dp[0][i][j] < l)
             {
-                if (i == 0)
+                r = l;
+                l = dp[0][i][j];
+            }
+            else if (dp[0][i][j] < r)
+            {
+                r = dp[0][i][j];
+            }
+        }
+        t[i] = {l, r};
+    }
+
+    for (lol i = 1; i < n; i++)
+    {
+        for (lol j = 0; j < k; j++)
+        {
+            if (c[i] != -1)
+            {
+                dp[i][j][c[i]] = dp[i - 1][j][c[i]];
+                if (j)
                 {
-                    if (k == 0)
-                        dp[i][j][k] = 0;
-                    else
+                    if (dp[i - 1][j - 1][c[i]] == t[j - 1].first)
                     {
-                        dp[i][j][k] = LONG_LONG_MAX;
-                    }
-                }
-                else if (k == 0)
-                {
-                    dp[i][j][k] = LONG_LONG_MAX;
-                }
-                else
-                {
-                    if (c[i - 1] != 0)
-                    {
-                        dp[i][j][k] = LONG_LONG_MAX;
-                        if (c[i - 1] != j + 1)
-                            continue;
-                        if (i == 1)
-                        {
-                            if (k == 1)
-                                dp[i][j][k] = 0;
-                            else
-                                dp[i][j][k] = LONG_LONG_MAX;
-                        }
-                        else if (pre[k - 1].first != dp[i - 1][j][k - 1])
-                        {
-                            dp[i][j][k] = min(dp[i][j][k], pre[k - 1].first);
-                        }
-                        else
-                        {
-                            dp[i][j][k] = min(dp[i][j][k], pre[k - 1].second);
-                        }
-                        dp[i][j][k] = min(dp[i][j][k], dp[i - 1][j][k]);
+                        dp[i][j][c[i]] = min(dp[i][j][c[i]], t[j - 1].second);
                     }
                     else
                     {
-                        dp[i][j][k] = LONG_LONG_MAX;
-                        if (i == 1)
+                        dp[i][j][c[i]] = min(dp[i][j][c[i]], t[j - 1].first);
+                    }
+                }
+            }
+            else
+            {
+                for (lol k1 = 0; k1 < m; k1++)
+                {
+                    dp[i][j][k1] = dp[i - 1][j][k1];
+                    if (j)
+                    {
+                        if (dp[i - 1][j - 1][k1] == t[j - 1].first)
                         {
-                            if (k == 1)
-                                dp[i][j][k] = min(dp[i][j][k], p[i - 1][j]);
-                            else
-                            {
-                                dp[i][j][k] = LONG_LONG_MAX;
-                            }
-                        }
-                        else if (pre[k - 1].first != dp[i - 1][j][k - 1])
-                        {
-                            if (pre[k - 1].first != LONG_LONG_MAX)
-                                dp[i][j][k] = min(dp[i][j][k], pre[k - 1].first + p[i - 1][j]);
+                            dp[i][j][k1] = min(dp[i][j][k1], t[j - 1].second);
                         }
                         else
                         {
-                            if (pre[k - 1].second != LONG_LONG_MAX)
-                                dp[i][j][k] = min(dp[i][j][k], pre[k - 1].second + p[i - 1][j]);
+                            dp[i][j][k1] = min(dp[i][j][k1], t[j - 1].first);
                         }
-                        if (dp[i - 1][j][k] != LONG_LONG_MAX)
-                            dp[i][j][k] = min(dp[i][j][k], dp[i - 1][j][k] + p[i - 1][j]);
                     }
+                    if (dp[i][j][k1] != LONG_LONG_MAX)
+                        dp[i][j][k1] += paint[i][k1];
                 }
             }
         }
-        pre.clear();
-        for (lol k = 0; k <= K; k++)
+        for (lol j = 0; j < k; j++)
         {
-            lol f = LONG_LONG_MAX, s = LONG_LONG_MAX;
-            for (lol j = 0; j < m; j++)
+
+            lol l = LONG_LONG_MAX;
+            lol r = LONG_LONG_MAX;
+            for (lol k1 = 0; k1 < m; k1++)
             {
-                if (dp[i][j][k] <= f)
+                if (dp[i][j][k1] < l)
                 {
-                    s = f;
-                    f = dp[i][j][k];
+                    r = l;
+                    l = dp[i][j][k1];
                 }
-                else if (dp[i][j][k] <= s)
+                else if (dp[i][j][k1] < r)
                 {
-                    s = dp[i][j][k];
+                    r = dp[i][j][k1];
                 }
             }
-            pre.push_back({f, s});
+            t[j] = {l, r};
         }
     }
     lol ans = LONG_LONG_MAX;
     for (lol i = 0; i < m; i++)
     {
-        ans = min(ans, dp[n][i][K]);
+        ans = min(ans, dp[n - 1][k - 1][i]);
     }
     if (ans == LONG_LONG_MAX)
         cout << -1;

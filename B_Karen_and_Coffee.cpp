@@ -5,7 +5,7 @@ int main()
 {
     lol n, k, q;
     cin >> n >> k >> q;
-
+ //a
     lol c[200001];
 
     for (lol i = 0; i <= 200000; i++)
