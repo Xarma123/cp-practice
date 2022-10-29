@@ -1,88 +1,59 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
-vector<lol> divisors(lol n)
-{
-    vector<lol> v;
-    for (lol i = 1; i <= sqrt(n); i++)
-    {
-        if (n % i == 0)
-        {
-
-            if (n / i == i)
-                v.push_back(i);
-            else
-            {
-                v.push_back(i);
-
-                v.push_back(n / i);
-            }
-        }
-    }
-    return v;
-}
 int main()
 {
-    lol T;
-    cin >> T;
-    while (T--)
+    std::ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    lol t;
+    cin >> t;
+    while (t--)
     {
         lol n;
         cin >> n;
-        if (n & 1)
+        lol a[n];
+        for (lol i = 0; i < n; i++)
         {
-            if (n != 1)
-                cout << "Ashishgup" << endl;
-            else
-                cout << "FastestFinger" << endl;
+            cin >> a[i];
         }
-        else
+        sort(a, a + n);
+        lol b[n];
+        for (lol k = n; k >= 0; k--)
         {
-            vector<lol> divisor = divisors(n);
-
-            sort(divisor.begin(), divisor.end());
-
-            lol d = 2;
-            for (lol i = 0; i < divisor.size(); i++)
+            lol K = k;
+            for (lol i = 0; i < n; i++)
             {
-
-                if (!(divisor[i] & (divisor[i] - 1)))
-                {
-                    d = divisor[i];
-                }
+                b[i] = a[i];
             }
 
-            n = n / d;
-
-            if (n == 1)
+            while (K)
             {
-                if (d != 2)
-                    cout << "FastestFinger" << endl;
-                else
+                lol i = upper_bound(b, b + n, K) - b;
+                i--;
+
+                if (i >= 0)
                 {
-                    cout << "Ashishgup" << endl;
+                    if (b[i] == LONG_LONG_MIN)
+                        break;
+                    b[i] = LONG_LONG_MIN;
                 }
+                else
+                    break;
+                i = 0;
+                while (i < n && b[i] == LONG_LONG_MIN)
+                    i++;
+                if (i != n)
+                {
+                    b[i] += K;
+                }
+                K--;
+                sort(b, b + n);
             }
-            else
+            if (K == 0)
             {
-                divisor.clear();
-                divisor = divisors(n);
-
-                if (divisor.size() == 2)
-                {
-                    if (d == 2)
-                    {
-                        cout << "FastestFinger" << endl;
-                    }
-                    else
-                    {
-                        cout << "Ashishgup" << endl;
-                    }
-                }
-                else
-                {
-                    cout << "Ashishgup" << endl;
-                }
+                cout << k << endl;
+                break;
             }
         }
     }
