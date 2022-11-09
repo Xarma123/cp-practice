@@ -1,41 +1,52 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
+lol m = 1e8;
+lol n1_, n2_, k1, k2;
+lol dp[101][101][11][11];
+lol solve(lol n1, lol n2, lol f, lol h)
+{
+    if (dp[n1][n2][f][h] != -1)
+        return dp[n1][n2][f][h];
 
+    if (n1 + n2 == 0)
+        return 1;
+    if (n1 > 0 && n2 == 0)
+    {
+        if (f + n1 <= k1)
+            return 1;
+        else
+            return 0;
+    }
+    if (n2 > 0 && n1 == 0)
+    {
+        if (h + n2 <= k2)
+            return 1;
+        else
+            return 0;
+    }
+    lol ans = 0;
+    if (f + 1 <= k1)
+    {
+        ans += solve(n1 - 1, n2, f + 1, 0);
+        ans %= m;
+    }
+    if (h + 1 <= k2)
+    {
+        ans += solve(n1, n2 - 1, 0, h + 1);
+        ans %= m;
+    }
+    return dp[n1][n2][f][h] = ans;
+}
 int main()
 {
     std::ios::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    lol n1, n2, k1, k2;
-    cin >> n1 >> n2 >> k1 >> k2;
 
-    lol dp[n1 + 1][n2 + 1][k1 + 1][k2 + 1];
-    lol m = 1e8;
-    for (lol f = 0; f <= n1; f++)
-    {
-        for (lol h = 0; h <= n2; h++)
-        {
-            for (lol kf = 0; kf <= k1; kf++)
-            {
-                for (lol kh = 0; kh <= k2; kh++)
-                {
-                    if (f + h == 0)
-                        dp[f][h][kf][kh] = 1;
-                    else
-                    {
-                        lol ans = 0;
-                        if (kf > 0 && f > 0)
-                            ans = (ans + dp[f - 1][h][kf - 1][k2]) % m;
-                        if (kh > 0 && h > 0)
-                            ans = (ans + dp[f][h - 1][k1][kh - 1]) % m;
-                        dp[f][h][kf][kh] = ans;
-                    }
-                }
-            }
-        }
-    }
-    cout << dp[n1][n2][k1][k2] << endl;
+    cin >> n1_ >> n2_ >> k1 >> k2;
+    memset(dp, -1, sizeof(dp));
+    cout << solve(n1_, n2_, 0ll, 0ll);
 
     return 0;
 }
