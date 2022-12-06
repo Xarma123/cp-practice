@@ -1,0 +1,1 @@
+ans = LONG_LONG_MAX;
