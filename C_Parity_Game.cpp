@@ -3,41 +3,24 @@
 using namespace std;
 int main()
 {
-    string a, b;
-    cin >> a >> b;
-    if (a == b)
-        cout << "YES";
-    else
+    string s1, s2;
+    cin >> s1 >> s2;
+    lol o1 = 0, o2 = 0;
+    for (auto c : s1)
     {
-        lol onesa = 0;
-        for (lol i = 0; i < a.size(); i++)
-        {
-            if (a[i] == '1')
-                onesa++;
-        }
-
-        lol onesb = 0;
-        for (lol i = 0; i < b.size(); i++)
-        {
-            if (b[i] == '1')
-                onesb++;
-        }
-        
-            if (onesa % 2 != 0)
-            {
-                if (onesb <= (onesa + 1))
-                    cout << "YES";
-                else
-                    cout << "NO";
-            }
-            else
-            {
-                if (onesb <= onesa)
-                    cout << "YES";
-                else
-                    cout << "NO";
-            }
-        
+        if (c == '1')
+            o1++;
     }
-    return 0;
+    for (auto c : s2)
+    {
+        if (c == '1')
+            o2++;
+    }
+    if (o1 + (o1 % 2) >= o2)
+    {
+
+        cout << "YES";
+    }
+    else
+        cout << "NO";
 }
