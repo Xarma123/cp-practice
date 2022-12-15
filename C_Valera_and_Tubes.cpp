@@ -61,7 +61,7 @@ int main()
             }
             else if (!f)
             {
-                cout << n * m - 2*1ll*(K - 1) << " " << i << " " << j;
+                cout << n * m - 2 * 1ll * (K - 1) << " " << i << " " << j;
                 f = true;
             }
             else
