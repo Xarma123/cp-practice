@@ -81,8 +81,7 @@ int main()
 
             cin >> s;
         }
-        caseno++; 
-        
+        caseno++;
     }
 
     return 0;
