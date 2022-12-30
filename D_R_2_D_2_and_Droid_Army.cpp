@@ -1,120 +1,139 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
-vector<lol> cmp(vector<lol> &a, vector<lol> &b)
+lol lg[100005];
+class sparse
 {
-    vector<lol> c;
-    for (lol i = 0; i < a.size(); i++)
+public:
+    vector<vector<lol>> v;
+    sparse(vector<lol> a)
     {
-        c.push_back(max(a[i], b[i]));
+        v.resize(a.size());
+        for (lol i = 0; i < a.size(); i++)
+        {
+            v[i].assign(30, 0);
+        }
+        for (lol j = 0; j < 30; j++)
+        {
+            for (lol i = 0; i + (1ll << j) - 1 < a.size(); i++)
+            {
+                if (j == 0)
+                    v[i][j] = a[i];
+                else
+                    v[i][j] = max(v[i][j - 1], v[i + (1ll << (j - 1))][j - 1]);
+            }
+        }
     }
-    return c;
-}
-lol sum(vector<lol> &a)
-{
-    lol c = 0;
-    for (lol i = 0; i < a.size(); i++)
+    lol mn(lol l, lol r)
     {
-        c += a[i];
+        lol j = lg[r - l + 1];
+        return max(v[l][j], v[r - (1ll << j) + 1][j]);
     }
-    return c;
-}
+};
 int main()
 {
     std::ios::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
+    for (lol i = 1; i < 100005; i++)
+    {
+        if (i == 1)
+            lg[i] = 0;
+        else
+            lg[i] = lg[i / 2] + 1;
+    }
+
     lol n, m, k;
     cin >> n >> m >> k;
-    vector<vector<lol>> a;
+    vector<vector<lol>> v(m);
     for (lol i = 0; i < n; i++)
     {
-        vector<lol> y;
         for (lol j = 0; j < m; j++)
         {
-            lol t;
-            cin >> t;
-            y.push_back(t);
-        }
-        a.push_back(y);
-    }
-    lol mxn;
-    if (n > 1)
-        mxn = ceil(log2l(n));
-    else
-        mxn = 1;
-
-    vector<lol> sparseTable[n][mxn + 1];
-    for (lol j = 0; j <= mxn; j++)
-    {
-        for (lol i = 0; i + (1 << j) - 1 < n; i++)
-        {
-            if (j == 0)
-            {
-                sparseTable[i][j] = a[i];
-            }
-            else
-            {
-                sparseTable[i][j] = cmp(sparseTable[i][j - 1], sparseTable[i + (1 << (j - 1))][j - 1]);
-            }
+            lol q;
+            cin >> q;
+            v[j].push_back(q);
         }
     }
-    lol s = 0;
-    lol e = n + 1;
-
-    while (s != e - 1)
+    vector<sparse> q;
+    for (lol j = 0; j < m; j++)
     {
-        lol md = (s + e) / 2;
+        sparse s(v[j]);
+        q.push_back(s);
+    }
 
+    lol st = 0, e = n + 1;
+    while (st != e - 1)
+    {
+        lol md = (st + e) / 2;
         if (md == 0)
-            s = 0;
+        {
+            st = md;
+        }
         else if (md == n + 1)
-            e = n + 1;
+            e = md;
         else
         {
-
-            lol i;
-            for (i = 0; i + md - 1 < n; i++)
+            lol c = LONG_LONG_MAX;
+            for (lol i = 0; i + md - 1 < n; i++)
             {
-                vector<lol> y;
-                lol j = i + md - 1;
-                lol x = log2l(j - i + 1);
-                y = cmp(sparseTable[i][x], sparseTable[j + 1 - (1 << x)][x]);
-
-                if (sum(y) <= k)
-                    break;
+                lol c1 = 0;
+                for (lol j = 0; j < m; j++)
+                {
+                    c1 += q[j].mn(i, i + md - 1);
+                }
+                c = min(c, c1);
             }
-            if (i == n - md + 1)
-                e = md;
+            if (c <= k)
+            {
+                st = md;
+            }
             else
-            {
-                s = md;
-            }
+                e = md;
         }
     }
-    if (s == 0)
+    if (st == 0)
     {
-        cout << k << " ";
-        m--;
-        while (m--)
+        for (lol i = 0; i < m; i++)
         {
             cout << 0 << " ";
         }
     }
     else
     {
-        vector<lol> y;
-        for (lol i = 0; i + s - 1 < n; i++)
+
+        lol c = LONG_LONG_MAX;
+        for (lol i = 0; i + st - 1 < n; i++)
         {
-            lol j = i + s - 1;
-            lol x = log2l(j - i + 1);
-            y = cmp(sparseTable[i][x], sparseTable[j + 1 - (1 << x)][x]);
-            if (sum(y) <= k)
-                break;
+            lol c1 = 0;
+            for (lol j = 0; j < m; j++)
+            {
+                c1 += q[j].mn(i, i + st - 1);
+            }
+            c = min(c, c1);
         }
-        for (lol i = 0; i < y.size(); i++)
+
+        lol ans[m];
+        memset(ans, 0, sizeof(ans));
+        for (lol i = 0; i + st - 1 < n; i++)
         {
-            cout << y[i] << " ";
+            lol c1 = 0;
+            for (lol j = 0; j < m; j++)
+            {
+                c1 += q[j].mn(i, i + st - 1);
+            }
+            if (c1 == c)
+            {
+                for (lol j = 0; j < m; j++)
+                {
+                    ans[j] = q[j].mn(i, i + st - 1);
+                }
+                break;
+            }
+        }
+        for (lol i = 0; i < m; i++)
+        {
+            cout << ans[i] << " ";
         }
     }
 
