@@ -1,75 +1,51 @@
 #include <bits/stdc++.h>
-#define lol long long
 using namespace std;
+long long binpow(long long a, long long b)
+{
+    if (b == 0)
+        return 1;
+    long long res = binpow(a, b / 2);
+    if (b % 2)
+        return res * res * a;
+    else
+        return res * res;
+}
 int main()
 {
-    std::ios::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
-    lol t;
-    cin >> t;
-    while (t--)
+    int tes;
+    cin >> tes;
+lable:
+    while (tes-- > 0)
     {
-        lol n, s, k;
+        long long n, k, s, i, tmp, sum = 0;
         cin >> n >> k >> s;
-        if (k == 1)
+        tmp = s;
+        int b[n];
+        for (i = 0; i < n; i++)
         {
-            if (s <= n)
+            long long rem = s % k;
+            if (rem != 0 && rem != 1 && rem != k - 1)
             {
-                for (lol i = 0; i < n; i++)
-                {
-                    if (i < s)
-                        cout << 1 << " ";
-                    else
-                        cout << 0 << " ";
-                }
-                cout << endl;
-            }
-            else
                 cout << -2 << endl;
+                // break;
+                goto lable;
+            }
+            if (rem == k - 1 && k != 2)
+                rem = -1;
+            b[i] = rem;
+            // cout<<b[i]<<" ";
+            s = (s - rem) / k;
         }
-        else
+        for (i = 0; i < n; i++)
+            sum += (b[i] * binpow(k, i));
+        if (sum != tmp)
         {
-            lol b[n];
-            memset(b, 0, sizeof(b));
-            lol p, v;
-            bool f = true;
-            while (s)
-            {
-                p = 0;
-                v = 1;
-                while (v <= s)
-                {
-                    v = v * 1ll * k;
-                    p++;
-                }
-                p--;
-                if (p >= n)
-                {
-                    f = false;
-                    break;
-                }
-                b[p]++;
-                s -= powl(k, p);
-            }
-
-            for (lol i = 0; i < n; i++)
-            {
-                if (b[i] > 1)
-                    f = false;
-            }
-            if (f)
-            {
-                for (lol i = 0; i < n; i++)
-                {
-                    cout << b[i] << " ";
-                }
-                cout << endl;
-            }
-            else
-                cout << -2 << endl;
+            cout << -2 << endl;
+            goto lable;
         }
+        for (i = 0; i < n; i++)
+            cout << b[i] << " ";
+        cout << endl;
     }
-
     return 0;
 }
