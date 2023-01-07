@@ -10,7 +10,6 @@ int main()
         lol a, b;
         cin >> a >> b;
         lol x = 0;
-
         if ((a - 1) % 4 == 0)
             x = a - 1;
         else if ((a - 1) % 4 == 1)
