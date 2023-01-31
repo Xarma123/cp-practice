@@ -2,27 +2,29 @@
 #define lol long long
 using namespace std;
 int main()
-{  //a
+{
     std::ios::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     lol n;
     cin >> n;
     lol a[n];
-    unordered_set<lol> mp;
-    lol c = 0;
+    lol ans = 0;
+    lol s = 0;
     for (lol i = 0; i < n; i++)
     {
         cin >> a[i];
-        if (mp.count(a[i]))
-        {
-            c++;
-            mp.erase(a[i]);
-        }
-        else
-            mp.insert(a[i]);
+        ans += a[i];
+        s += a[i];
     }
-    cout << c / 2;
+    sort(a, a + n);
+    for (lol i = 1; i < n; i++)
+    {
+        s -= a[i - 1];
+        ans += s;
+        ans += a[i - 1];
+    }
+    cout << ans;
 
     return 0;
 }
