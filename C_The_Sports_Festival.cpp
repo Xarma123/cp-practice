@@ -7,7 +7,6 @@ int main()
     lol n;
     cin >> n;
     lol s[n];
-
     for (lol i = 0; i < n; i++)
     {
         cin >> s[i];
@@ -30,12 +29,11 @@ int main()
             {
                 dp[i][j] = s[i] - s[j];
                 if (j + 1 < n && i - 1 >= 0)
-                    dp[i][j] += max(dp[i][j + 1], dp[i - 1][j]);
-                    
+                    dp[i][j] += min(dp[i][j + 1], dp[i - 1][j]);
             }
         }
     }
-    cout << dp[0][n - 1];
+    cout << dp[n - 1][0];
 
     return 0;
 }

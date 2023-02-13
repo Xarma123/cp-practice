@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
+//
 int main()
 {
     std::ios::sync_with_stdio(false);
@@ -17,7 +18,6 @@ int main()
         {
             len++;
             lps[i] = len;
-
             i++;
         }
         else
@@ -25,7 +25,6 @@ int main()
             if (len == 0)
             {
                 lps[i] = 0;
-
                 i++;
             }
             else

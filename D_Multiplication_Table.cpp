@@ -9,7 +9,7 @@ int main()
     lol n, m, k;
     cin >> n >> m >> k;
     lol s = 0;
-    lol e = n * 1ll * m + 1; 
+    lol e = n * 1ll * m + 1;
     while (s != e - 1)
     {
         lol md = (s + e) / 2;
@@ -32,7 +32,7 @@ int main()
                     c += x;
                 }
                 else
-                c+=m;
+                    c += m;
             }
             if (c >= k)
                 e = md;

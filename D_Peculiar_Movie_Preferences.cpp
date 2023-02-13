@@ -27,9 +27,8 @@ int main()
         while (n--)
         {
             string a;
-            cin >> a; 
+            cin >> a;
             x.insert(a);
-            
         }
     }
 

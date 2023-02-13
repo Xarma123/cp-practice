@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
-map<string, lol> ind;
 class dsu
 {
 public:
@@ -41,6 +40,7 @@ public:
         if (!check_enemy(a, b))
         {
             unio(a, b);
+            unio(find(a + n), find(b + n));
             return true;
         }
         return false;
@@ -62,6 +62,7 @@ int main()
     cin.tie(NULL);
     cout.tie(NULL);
     lol n, m, q;
+    map<string, lol> ind;
     cin >> n >> m >> q;
     for (lol i = 0; i < n; i++)
     {

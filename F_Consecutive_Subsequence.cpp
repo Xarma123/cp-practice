@@ -13,7 +13,6 @@ int main()
     for (lol i = 0; i < n; i++)
     {
         cin >> a[i];
-
         mp[a[i]] = mp[a[i] - 1] + 1;
     }
     lol ans = 1;
