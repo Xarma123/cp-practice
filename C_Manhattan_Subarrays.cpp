@@ -23,7 +23,25 @@ int main()
                 ans++;
             }
         }
-        cout << 2 * n - 1 + ans << endl;
+        for (lol i = 3; i < n; i++)
+        {
+            bool f = true;
+            for (lol j = i - 3; j < i - 1; j++)
+            {
+                for (lol k = j + 1; k < i; k++)
+                {
+                    for (lol q = k + 1; q <= i; q++)
+                    {
+                        if (!(a[k] > max(a[j], a[q]) || a[k] < min(a[j], a[q])))
+                            f = false;
+                    }
+                }
+            }
+            if (f)
+                ans++;
+        }
+
+        cout << ans + 2ll * n - 1 << endl;
     }
 
     return 0;
