@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+#define lol long long
+using namespace std;
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    lol t;
+    cin >> t;
+    while (t--)
+    {
+        lol n;
+        cin >> n;
+        lol a[n];
+        for (lol i = 0; i < n; i++)
+        {
+            cin >> a[i];
+            if (a[i] == 1)
+                a[i]++;
+        }
+        for (lol i = 1; i < n; i++)
+        {
+            if (a[i] % a[i - 1] == 0)
+                a[i]++;
+        }
+        for (lol i = 0; i < n; i++)
+        {
+            cout << a[i] << " ";
+        }
+        cout << '\n';
+    }
+
+    return 0;
+}

@@ -1,24 +1,6 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
-map<pair<pair<lol, lol>, pair<lol,lol>>, set<pair<pair<lol, lol>, pair<lol,lol>>>> mp;
-lol n, m;
-lol dfs(lol i, pair<pair<lol, lol>, lol> x, lol a[])
-{
-    if (!mp.count(x))
-        return 0;
-    lol c = 1;
-    if (i == m)
-        return c;
-    for (auto e : mp[x])
-    {
-        if (e.first.first == i + 1 && e.first.second == a[i] && e.second == i)
-        {
-            c += dfs(i + 1, e, a);
-        }
-    }
-    return c;
-}
 int main()
 {
     std::ios::sync_with_stdio(false);
@@ -28,27 +10,42 @@ int main()
     cin >> t;
     while (t--)
     {
-        mp.clear();
+        lol n, m;
         cin >> n >> m;
         lol a[n][m];
+        set<string> x;
         for (lol i = 0; i < n; i++)
         {
-            pair<lol, lol> c[m];
+            string q = "";
+            x.insert(q);
             for (lol j = 0; j < m; j++)
             {
+                q.push_back('a');
                 cin >> a[i][j];
-                c[j] = {a[i][j], j + 1};
             }
-            sort(c, c + m);
-            for (lol j = 1; j < m; j++)
+            for (lol j = 0; j < m; j++)
             {
-                mp[{c[j - 1], {j - 1,}].insert({c[j], j});
+                q[a[i][j] - 1] = char(j + '0');
             }
-            mp[{c[m - 1], m - 1}].size();
+            while ((long long)q.size() > 0ll)
+            {
+                x.insert(q);
+                q.pop_back();
+            }
         }
         for (lol i = 0; i < n; i++)
         {
-            cout << dfs(1, {{1, a[i][0]}, 0}, a[i]) << " ";
+            string q = "";
+            lol j = 0;
+            while (x.count(q) && j < m)
+            {
+                q.push_back(char(a[i][j] - 1 + '0'));
+                j++;
+            }
+            if (x.count(q))
+                cout << (long long)q.size() << " ";
+            else
+                cout << (long long)q.size() - 1 << " ";
         }
         cout << '\n';
     }
