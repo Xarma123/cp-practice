@@ -1,34 +1,6 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
-
-vector<lol> nx(lol arr[], lol n)
-{
-    stack<pair<lol, lol>> s;
-    s.push({arr[0], 0});
-    vector<lol> nx(n);
-    for (lol i = 1; i < n; i++)
-    {
-
-        if (s.empty())
-        {
-            s.push({arr[i], i});
-            continue;
-        }
-        while (s.empty() == false && s.top().first < arr[i])
-        {
-            nx[s.top().second] = i;
-            s.pop();
-        }
-        s.push({arr[i], -1});
-    }
-    while (s.empty() == false)
-    {
-        nx[s.top().second] = n;
-        s.pop();
-    }
-    return nx;
-}
 int main()
 {
     std::ios::sync_with_stdio(false);
@@ -38,6 +10,7 @@ int main()
     cin >> t;
     while (t--)
     {
+
         lol n;
         cin >> n;
         lol a[n];
@@ -46,49 +19,67 @@ int main()
         {
             cin >> a[i];
         }
-        bool ans = true;
         for (lol i = 0; i < n; i++)
         {
             cin >> b[i];
-            if (b[i] > a[i])
-                ans = false;
         }
-        vector<lol> nxg = nx(b, n);
+        map<lol, lol> razor;
         lol m;
         cin >> m;
-        map<lol, lol> rzer;
-        for (lol i = 0; i < m; i++)
+        while (m--)
         {
-            lol q;
-            cin >> q;
-            rzer[q]++;
+            lol v;
+            cin >> v;
+            razor[v]++;
         }
-        if (!ans)
-            cout << "NO" << endl;
-        else
+        lol nx[n];
+        stack<lol> s;
+        s.push(-1);
+        for (lol i = 0; i < n; i++)
         {
-            map<lol, lol> us;
-            lol i;
-            for (i = 0; i < n; i++)
-            {   
-                if (a[i] > b[i] && us[b[i]] <= i)
-                {
-                    if (rzer.count(b[i]))
-                    {
-                        us[b[i]] = nxg[i];
-                        rzer[b[i]]--;
-                        if (rzer[b[i]] == 0)
-                            rzer.erase(b[i]);
-                    }
-                    else
-                        break;
-                }
+            while (s.top() != -1 && b[s.top()] < b[i])
+            {
+                nx[s.top()] = i;
+                s.pop();
             }
-            if (i == n)
-                cout << "YES" << endl;
-            else
-                cout << "NO" << endl;
+            s.push(i);
         }
+        while (s.top() != -1 && !s.empty())
+        {
+            nx[s.top()] = n;
+            s.pop();
+        }
+        bool ans = true;
+        map<lol, vector<lol>> mp;
+        for (lol i = 0; i < n; i++)
+        {
+            if (b[i] > a[i])
+            {
+                ans = false;
+            }
+            else if (b[i] < a[i])
+            {
+                mp[b[i]].push_back(i);
+            }
+        }
+        for (auto e : mp)
+        {
+            lol l = 0;
+            lol c = 0;
+            for (auto f : e.second)
+            {
+                if (f < l)
+                    continue;
+                c++;
+                l = nx[f];
+            }
+            if (razor[e.first] < c)
+                ans = false;
+        }
+        if (ans)
+            cout << "YES\n";
+        else
+            cout << "NO\n";
     }
 
     return 0;

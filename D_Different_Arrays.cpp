@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
+lol dp[300][200005];
 int main()
 {
     std::ios::sync_with_stdio(false);
@@ -12,42 +13,44 @@ int main()
     for (lol i = 0; i < n; i++)
     {
         cin >> a[i];
-        a[i] += 1e4 + 5;
     }
-    lol dp[n][2][20005];
-    memset(dp, 0, sizeof(dp));
-    lol ans = 0;
+    memset(dp, 0ll, sizeof(dp));
     lol m = 998244353;
-    for (lol i = 1; i < n - 1; i++)
+    lol d = 200005;
+    lol off = 90005;
+    for (lol i = 1; i < n; i++)
     {
         if (i == 1)
         {
-            dp[i][0][a[i]]++;
-            dp[i][1][a[i]]++;
+            dp[i][a[i] + off]++;
         }
         else
         {
-            for (lol j = 0; j < 20005; j++)
+            for (lol j = 0; j < d; j++)
             {
-                lol val = j;
-                lol ways = dp[i - 1][0][j];
-                dp[i][0][a[i] + val] += ways;
-                dp[i][0][a[i] + val] %= m;
-                dp[i][1][a[i] + val] += ways;
-                dp[i][1][a[i] + val] %= m;
+                if (j + a[i] < d)
+                {
+                    dp[i][j + a[i]] += dp[i - 1][j];
+                    dp[i][j + a[i]] %= m;
+                }
+                if (j != off)
+                {
+                    if (a[i] - j + 2ll * off >= 0 && a[i] - j + 2ll * off < d)
+                    {
+                        dp[i][a[i] - j + 2ll * off] += dp[i - 1][j];
+                        dp[i][a[i] - j + 2ll * off] %= m;
+                    }
+                }
             }
         }
     }
-}
-for (lol j = 0; j < 20005; j++)
-{
-    ans += dp[n - 2][0][j];
-    ans %= m;
-    ans += dp[n - 2][1][j];
-    ans %= m;
-}
+    lol ans = 0;
+    for (lol i = 0; i < d; i++)
+    {
+        ans += dp[n - 1][i];
+        ans %= m;
+    }
+    cout << ans;
 
-cout << ans;
-
-return 0;
+    return 0;
 }
