@@ -1,6 +1,23 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
+string solve(string s, string q)
+{
+    lol i = s.size() - 1;
+    lol j = q.size() - 1;
+    while (i >= 0 && j >= 0)
+    {
+        if (s[i] == '1' || q[j] == '1')
+            s[i] = '1';
+        i--;
+        j--;
+    }
+    reverse(s.begin(), s.end());
+    while (s.size() > 1 && s.back() == '0')
+        s.pop_back();
+    reverse(s.begin(), s.end());
+    return s;
+}
 int main()
 {
     std::ios::sync_with_stdio(false);
@@ -10,98 +27,26 @@ int main()
     cin >> n;
     string s;
     cin >> s;
-    lol st = -1;
-    for (lol i = 0; i < n; i++)
+    lol i = 0;
+    while (i < n && s[i] == '0')
+        i++;
+    if (i < n)
     {
-        if (s[i] == '1')
+        lol j = i + 1;
+        while (j < n && s[j] == '1')
+            j++;
+        lol l = n - j;
+        vector<string> ans;
+        for (lol k = i; k < j; k++)
         {
-            st = i;
-            break;
+            string q = s.substr(k, l);
+            ans.push_back(solve(s, q));
         }
-    }
-    if (st == -1)
-    {
-        cout << 0;
+        sort(ans.rbegin(), ans.rend());
+        cout << ans[0];
     }
     else
-    {
-        s = s.substr(st);
-        string s2 = s;
-        for (lol i = 0; i < s2.size(); i++)
-            s2[i] = char(1 - (s2[i] - '0') + '0');
-        st = 0;
-        for (; st < n; st++)
-        {
-            if (s2[st] == '1')
-                break;
-        }
-        if (st == n)
-        {
-            cout << s << endl;
-        }
-        else
-        {
-            s2 = s2.substr(st);
-            lol sz = s2.size();
-            s2 = s2 + "$" + s;
-            n = s2.size();
-            lol lps[n];
-            lps[0] = 0;
-            lol i = 1, j = 0;
-            while (i < n)
-            {
-                if (s2[i] == s2[j] || s2[j] == '0')
-                {
-                    lps[i] = j + 1;
-                    i++;
-                    j++;
-                }
-                else
-                {
-                    if (j == 0)
-                    {
-                        lps[i] = 0;
-                        i++;
-                    }
-                    else
-                    {
-                        j = lps[j - 1];
-                    }
-                }
-            }
-            bool f = false;
-            lol ans = 0;
-
-            for (lol i = 0; i < n; i++)
-            {
-                if (s2[i] == '$')
-                {
-                    f = true;
-                    continue;
-                }
-                if (!f)
-                    continue;
-                if (n - i >= sz)
-                    ans = max(ans, lps[i]);
-            }
-            lol c = 0;
-            for (lol i = 0; i < ans; i++)
-            {
-                if (s2[i] == '1')
-                    c++;
-            }
-
-            for (lol i = 0; i < s.size(); i++)
-            {
-                if (s[i] == '0' && c > 0)
-                {
-                    s[i] = '1';
-                    c--;
-                }
-            }
-            cout << s << endl;
-        }
-    }
+        cout << "0";
 
     return 0;
 }

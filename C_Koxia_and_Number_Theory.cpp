@@ -15,6 +15,7 @@ bool check(lol k, lol n, lol a[])
     }
     return false;
 }
+//a
 int main()
 {
     std::ios::sync_with_stdio(false);

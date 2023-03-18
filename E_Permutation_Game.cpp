@@ -8,6 +8,7 @@ int main()
     cout.tie(NULL);
     lol t;
     cin >> t;
+    //a
     while (t--)
     {
         lol n;
