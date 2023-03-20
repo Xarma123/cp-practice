@@ -4,7 +4,6 @@ using namespace std;
 map<lol, vector<lol>> mp;
 void dfs(lol c)
 {
-    
 }
 int main()
 {
@@ -20,6 +19,5 @@ int main()
         map[v].push_back(i);
     }
     dfs(1);
-
     return 0;
 }

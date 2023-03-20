@@ -6,7 +6,7 @@ lol k;
 lol q;
 lol h(lol p, lol c)
 {
-    lol v = 0;
+    lol v = 0;  
     for (auto e : tree[c])
     {
         if (e != p)
