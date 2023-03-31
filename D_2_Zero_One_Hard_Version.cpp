@@ -14,40 +14,40 @@ int main()
         cin >> n >> x >> y;
         string a, b;
         cin >> a >> b;
-        lol c = 0;
+        vector<lol> v;
         for (lol i = 0; i < n; i++)
         {
             if (a[i] != b[i])
-                c++;
+            {
+                v.push_back(i);
+            }
         }
-        if (c % 2)
+        if (v.size() % 2)
             cout << -1 << '\n';
+        else if (v.size() == 2)
+        {
+            if (v[0] == v[1] - 1)
+                cout << min(x, 2ll * y) << '\n';
+            else
+                cout << min((v[1] - v[0]) * 1ll * x, y) << '\n';
+        }
         else
         {
-            if (x < y && 2ll * x >= y)
+            lol dp[v.size() + 1];
+            dp[0] = 0;
+            dp[1] = 0;
+            for (lol i = 2; i <= v.size(); i++)
             {
-                lol q = 0;
-                for (lol i = 0; i < n; i++)
+                if ((i % 2))
                 {
-                    if (a[i] != b[i])
-                    {
-                        lol j = i + 1;
-                        while (j < n && a[j] == b[j])
-                            j++;
-                        q += (j - i) / 2;
-                        i = j - 1;
-                    }
+                    dp[i] = min(dp[i - 2] + (v[i - 1] - v[i - 2]) * 1ll * x, dp[i - 1]);
                 }
-                cout << q * 1ll * x + ((c / 2) - q) * 1ll * y << '\n';
+                else
+                {
+                    dp[i] = min(dp[i - 2] + (v[i - 1] - v[i - 2]) * 1ll * x, dp[i - 1] + y);
+                }
             }
-            else if (y <= x)
-            {
-                cout<<(c/2)*1ll*y<<'\n';
-            }
-            else 
-            {
-                    
-            }
+            cout << dp[v.size()] << '\n';
         }
     }
 

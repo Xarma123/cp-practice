@@ -49,10 +49,11 @@ int main()
                 c[1][i] = max(a[1][i], c[1][i + 1] - 1);
             }
         }
-        7 bool vis[2][m];
+        bool vis[2][m];
         memset(vis, false, sizeof(vis));
         vis[0][0] = true;
         lol t = 0;
+        lol ans = LONG_LONG_MAX;
         while (i != 1 && j != m - 1)
         {
             if (!vis[1 - i][j])
@@ -90,7 +91,6 @@ int main()
             }
             else
             {
-                
             }
         }
         ans = min(ans, t);

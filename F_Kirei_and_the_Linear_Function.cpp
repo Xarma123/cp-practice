@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
+//a
 lol modInverse(lol A, lol M)
 {
     lol m0 = M;

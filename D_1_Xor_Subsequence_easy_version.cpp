@@ -13,27 +13,27 @@ int main()
         lol n;
         cin >> n;
         lol a[n];
-
         for (lol i = 0; i < n; i++)
         {
             cin >> a[i];
         }
-        lol mp[2ll * n + 5];
-        lol ans = 0;
-        for (lol x = 0; x * 1ll * x <= 2ll * n; x++)
+        lol dp[n];
+
+        for (lol i = 0; i < n; i++)
         {
-            memset(mp, 0, sizeof(mp));
-            mp[0] = 1;
-            lol c = 0;
-            for (lol i = 0; i < n; i++)
+            dp[i] = 1;
+            for (lol j = i - 1; j >= 0 && j >= i - 600; j--)
             {
-                c ^= a[i];
-                if ((c ^ (x * 1ll * x)) < 2ll * n + 5)
-                    ans += mp[(c ^ (x * 1ll * x))];
-                mp[c]++;
+                if ((a[j] ^ i) < (a[i] ^ j))
+                    dp[i] = max(dp[i], dp[j] + 1);
             }
         }
-        ans = n * 1ll * (n + 1) / 2 - ans;
+
+        lol ans = 0;
+        for (lol i = 0; i < n; i++)
+        {
+            ans = max(ans, dp[i]);
+        }
         cout << ans << '\n';
     }
 
