@@ -8,10 +8,12 @@ int main()
     cout.tie(NULL);
     lol t;
     cin >> t;
-    while (t--)
+    for (lol op = 0; op < t; op++)
     {
+
         lol n, d12, d23, d31;
         cin >> n >> d12 >> d23 >> d31;
+       
         // 1 mid
         if (d12 + d31 == d23)
         {
@@ -97,7 +99,7 @@ int main()
         {
             lol ex = d31 + d12 - d23;
 
-            if (((ex / 2) + d23 <= n - 1) && (ex % 2 == 0))
+            if (((ex / 2) + d23 <= n - 1) && (ex % 2 == 0)&&d31>=ex/2&&d12>=ex/2)
             {
                 cout << "YES\n";
                 lol l = 2;
@@ -113,12 +115,13 @@ int main()
                         e = l;
                 }
                 cout << l << " " << 3 << '\n';
-                if (--d12 == 0)
-                    e = 3;
+
+                d12 = ex / 2;
                 l = 1;
                 for (lol i = 0; i < d12 - 1; i++)
                 {
                     cout << l << " " << (c++) << '\n';
+                    l = c - 1;
                 }
                 cout << e << " " << l << '\n';
                 while (c <= n)
