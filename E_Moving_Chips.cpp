@@ -1,4 +1,20 @@
- lol dp[2][n];
+#include <bits/stdc++.h>
+#define lol long long
+using namespace std;
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    lol t;
+    cin >> t;
+    while (t--)
+    {
+        lol n;
+        cin >> n;
+        string a[2];
+        cin >> a[0] >> a[1];
+        lol dp[2][n];
         bool f = true;
         for (lol i = 0; i < n; i++)
         {
@@ -19,12 +35,12 @@
                     }
                     else
                     {
-                        dp[j][i] = min(dp[j][i - 1], 2 + dp[1 - j][i - 1]);
+                        dp[j][i] = min(dp[j][i - 1] + 1, 2 + dp[1 - j][i - 1]);
                     }
                 }
-                cout << dp[j][i] << " ";
+               
             }
-            cout << endl;
+         
             if (a[0][i] == '*' || a[1][i] == '*')
                 f = false;
         }
@@ -38,3 +54,7 @@
             }
         }
         cout << min(dp[0][i], dp[1][i]) << '\n';
+    }
+
+    return 0;
+}

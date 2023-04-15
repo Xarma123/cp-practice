@@ -1,103 +1,109 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
-struct tri
-{
-    lol sum;
-    lol pre;
-    lol suf;
-    lol mx;
-};
-
-class SegmentTree
+class segtree
 {
 public:
-    lol size;
-    vector<tri> seg;
-    SegmentTree(vector<lol> &a)
+    vector<lol> sum, pre, suf;
+    lol n;
+    segtree(lol c)
     {
-        size = 1;
-        while (size < a.size())
-            size *= 2;
-        seg.assign(2 * size, {0, 0, 0, 0});
-        for (lol i = 0; i < a.size(); i++)
-        {
-            set(i, a[i]);
-        }
+        n = 1;
+        while (n < c)
+            n = n * 2ll;
+        sum.assign(2ll * n, 0);
+        pre.assign(2ll * n, 0);
+        suf.assign(2ll * n, 0);
     }
     void set(lol i, lol v, lol x, lol lx, lol rx)
     {
         if (rx - lx == 1)
         {
-            seg[x] = {v, v, v, v};
+            suf[x] = max(v, 0ll);
+            sum[x] = v;
+            pre[x] = max(v, 0ll);
             return;
         }
         lol m = (lx + rx) / 2;
         if (i < m)
-            set(i, v, 2 * x + 1, lx, m);
+            set(i, v, 2ll * x + 1, lx, m);
         else
-            set(i, v, 2 * x + 2, m, rx);
-        seg[x] = {seg[2 * x + 1].sum + seg[2 * x + 2].sum,
-
-                  max(seg[2 * x + 1].sum + seg[2 * x + 2].sum, max(seg[2 * x + 1].sum + seg[2 * x + 2].pre, seg[2 * x + 1].pre)),
-                  max(seg[2 * x + 1].sum + seg[2 * x + 2].sum, max(seg[2 * x + 2].sum + seg[2 * x + 1].suf, seg[2 * x + 2].suf)),
-                  max(seg[2 * x + 1].mx, max(seg[2 * x + 2].mx, seg[2 * x + 1].suf + seg[2 * x + 2].pre))};
+            set(i, v, 2ll * x + 2, m, rx);
+        sum[x] = sum[2ll * x + 1] + sum[2ll * x + 2];
+        pre[x] = max(pre[2ll * x + 1], pre[2ll * x + 2] + sum[2ll * x + 1]);
+        suf[x] = max(suf[2ll * x + 2], suf[2ll * x + 1] + sum[2ll * x + 2]);
     }
     void set(lol i, lol v)
     {
-        set(i, v, 0, 0, size);
+        set(i, v, 0, 0, n);
     }
-
-    tri maxsum(lol l, lol r)
-    {
-        if (l >= r)
-            return {0, 0, 0, 0};
-        return maxsum(l, r, 0, 0, size);
-    }
-    tri maxsum(lol l, lol r, lol x, lol lx, lol rx)
+    pair<lol, lol> pr(lol l, lol r, lol x, lol lx, lol rx)
     {
         if (lx >= l && rx <= r)
         {
-            return seg[x];
+            return {pre[x], sum[x]};
         }
         if (lx >= r || rx <= l)
-            return {0, 0, 0, 0};
+        {
+            return {0ll, 0ll};
+        }
         lol m = (lx + rx) / 2;
-        tri left = maxsum(l, r, 2 * x + 1, lx, m);
-        tri right = maxsum(l, r, 2 * x + 2, m, rx);
-        return {
-            left.sum + right.sum,
-            max(left.sum + right.pre, left.pre),
-            max(right.suf, right.sum + left.suf),
-            max(left.mx, max(right.mx, left.suf + right.pre))
-
-        };
+        pair<lol, lol> sl = pr(l, r, 2ll * x + 1, lx, m);
+        pair<lol, lol> sr = pr(l, r, 2ll * x + 2, m, rx);
+        return {max(max(sl.first, sr.first + sl.second), 0ll), sl.second + sr.second};
+    }
+    lol pr(lol l, lol r)
+    {
+        return pr(l, r, 0, 0, n).first;
+    }
+    pair<lol, lol> su(lol l, lol r, lol x, lol lx, lol rx)
+    {
+        if (lx >= l && rx <= r)
+        {
+            return {suf[x], sum[x]};
+        }
+        if (lx >= r || rx <= l)
+        {
+            return {0ll, 0ll};
+        }
+        lol m = (lx + rx) / 2;
+        pair<lol, lol> sl = su(l, r, 2ll * x + 1, lx, m);
+        pair<lol, lol> sr = su(l, r, 2ll * x + 2, m, rx);
+        return {max(max(sr.first, sr.second + sl.first), 0ll), sl.second + sr.second};
+    }
+    lol su(lol l, lol r)
+    {
+        return su(l, r, 0, 0, n).first;
     }
 };
-vector<pair<lol, lol>> pre_nex_gr(vector<lol> &a)
+vector<pair<lol, lol>> prv_nx(lol a[], lol n)
 {
-    stack<pair<lol, lol>> s;
-    s.push({LONG_LONG_MAX, -1});
-    vector<pair<lol, lol>> ans(a.size(), {-1, -1});
-    for (lol i = 0; i < a.size(); i++)
+    lol prv[n], nx[n];
+    stack<lol> s;
+    s.push(-1);
+    for (lol i = 0; i < n; i++)
     {
-        while (s.top().first <= a[i])
+        while (s.top() != -1 && a[s.top()] <= a[i])
         {
-            pair<lol, lol> x = s.top();
+            lol v = s.top();
             s.pop();
-            ans[x.second].first = s.top().second;
-            ans[x.second].second = i;
+            nx[v] = i;
         }
-        s.push({a[i], i});
+        prv[i] = s.top();
+        s.push(i);
     }
-    while (s.size() > 1)
+    while (s.top() != -1)
     {
-        pair<lol, lol> x = s.top();
+        lol v = s.top();
         s.pop();
-        ans[x.second].first = s.top().second;
-        ans[x.second].second = a.size();
+        nx[v] = n;
     }
-    return ans;
+    vector<pair<lol, lol>> v(n);
+    for (lol i = 0; i < n; i++)
+    {
+        v[i] = {prv[i], nx[i]};
+    }
+    return v;
 }
 int main()
 {
@@ -110,25 +116,38 @@ int main()
     {
         lol n;
         cin >> n;
-        vector<lol> a(n, 0);
+        lol a[n];
+        segtree s(n);
         for (lol i = 0; i < n; i++)
         {
             cin >> a[i];
+            s.set(i, a[i]);
         }
-        SegmentTree s(a);
-        vector<pair<lol, lol>> g = pre_nex_gr(a);
-        lol i;
-        for (i = 0; i < a.size(); i++)
+        bool ans = true;
+        vector<pair<lol, lol>> v = prv_nx(a, n);
+
+        for (lol i = 0; i < n; i++)
         {
-            if (s.maxsum(g[i].first + 1, i).suf > 0)
-                break;
-            if (s.maxsum(i + 1, g[i].second).pre > 0)
-                break;
+            lol l = v[i].first;
+            lol r = v[i].second;
+            l++;
+            lol vl = 0;
+            if (i - l > 0)
+            {
+                vl += s.su(l, i);
+            }
+            lol vr = 0;
+            if (r - i > 0)
+            {
+                vr += s.pr(i + 1, r);
+            }   
+            if (vl + vr > 0ll)
+                ans = false;
         }
-        if (i == a.size())
-            cout << "YES" << endl;
+        if (ans)
+            cout << "YES\n";
         else
-            cout << "NO" << endl;
+            cout << "NO\n";
     }
 
     return 0;

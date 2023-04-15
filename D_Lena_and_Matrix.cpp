@@ -17,79 +17,141 @@ int main()
         {
             cin >> a[i];
         }
-        lol dp[n][m];
-        lol wcl[m];
-        for (lol j = 0; j < m; j++)
+        lol ans[n][m];
+        memset(ans, 0ll, sizeof(ans));
+        lol p[m];
+        for (lol i = 0; i < n; i++)
         {
-            lol c = 0;
-            for (lol i = 0; i < n; i++)
+            lol l = -1, r = -1;
+            for (lol j = 0; j < m; j++)
             {
-                dp[i][j] = 0;
-                if (i > 0)
+                if (a[i][j] == 'B')
                 {
-                    dp[i][j] += dp[i - 1][j] + c;
+                    l = j;
+                    break;
                 }
-                if (a[i][j] == 'W')
-                    c++;
             }
-            wcl[j] = c;
-            c = 0;
-            for (lol i = n - 1; i >= 0; i--)
+            for (lol j = m - 1; j >= 0; j--)
             {
-                dp[i][j] = 0;
-                if (i != n - 1)
+                if (a[i][j] == 'B')
                 {
-                    dp[i][j] += dp[i + 1][j] + c;
+                    r = j;
+                    break;
                 }
-                if (a[i][j] == 'W')
-                    c++;
+            }
+            if (i == 0)
+            {
+                if (l == -1)
+                    memset(p, -1, sizeof(p));
+                else
+                {
+                    for (lol j = 0; j < m; j++)
+                    {
+                        p[j] = max((long long)abs(j - l), (long long)abs(j - r));
+                    }
+                }
+            }
+            else
+            {
+                if (l == -1)
+                {
+                    for (lol j = 0; j < m; j++)
+                    {
+                        if (p[j] != -1)
+                            p[j] = p[j] + 1ll;
+                    }
+                }
+                else
+                {
+                    for (lol j = 0; j < m; j++)
+                    {
+                        if (p[j] != -1)
+                        {
+                            p[j] = max(p[j] + 1ll, max((long long)abs(j - l), (long long)abs(j - r)));
+                        }
+                        else
+                            p[j] = max((long long)abs(j - l), (long long)abs(j - r));
+                    }
+                }
+            }
+            for (lol j = 0; j < m; j++)
+            {
+                ans[i][j] = max(ans[i][j], p[j]);
             }
         }
-        lol l[n][m];
-        lol s = 0;
-        for (lol j = 0; j < m; j++)
+        for (lol i = n - 1; i >= 0; i--)
         {
-            for (lol i = 0; i < n; i++)
+            lol l = -1, r = -1;
+            for (lol j = 0; j < m; j++)
             {
-                if (j > 0)
+                if (a[i][j] == 'B')
                 {
-                    l[i][j] = dp[i][j - 1];
-                    l[i][j] += l[i][j - 1];
-                    l[i][j] += s;
+                    l = j;
+                    break;
                 }
             }
-            s += wcl[j];
-        }
-        lol r[n][m];
-        s = 0;
-        for (lol j = m - 1; j >= 0; j--)
-        {
-            for (lol i = 0; i < n; i++)
+            for (lol j = m - 1; j >= 0; j--)
             {
-                if (j != m - 1)
+                if (a[i][j] == 'B')
                 {
-                    r[i][j] = dp[i][j + 1];
-                    r[i][j] += l[i][j + 1];
-                    r[i][j] += s;
+                    r = j;
+                    break;
                 }
             }
-            s += wcl[j];
+            if (i == n - 1)
+            {
+                if (l == -1)
+                    memset(p, -1, sizeof(p));
+                else
+                {
+                    for (lol j = 0; j < m; j++)
+                    {
+                        p[j] = max((long long)abs(j - l), (long long)abs(j - r));
+                    }
+                }
+            }
+            else
+            {
+                if (l == -1)
+                {
+                    for (lol j = 0; j < m; j++)
+                    {
+                        if (p[j] != -1)
+                            p[j] = p[j] + 1ll;
+                    }
+                }
+                else
+                {
+                    for (lol j = 0; j < m; j++)
+                    {
+                        if (p[j] != -1)
+                        {
+                            p[j] = max(p[j] + 1ll, max((long long)abs(j - l), (long long)abs(j - r)));
+                        }
+                        else
+                            p[j] = max((long long)abs(j - l), (long long)abs(j - r));
+                    }
+                }
+            }
+            for (lol j = 0; j < m; j++)
+            {
+                ans[i][j] = max(ans[i][j], p[j]);
+            }
         }
-        lol ans = LONG_LONG_MIN;
-        lol le, re;
+        lol v = LONG_LONG_MAX;
+        lol a1, a2;
         for (lol i = 0; i < n; i++)
         {
             for (lol j = 0; j < m; j++)
             {
-                if (ans <= dp[i][j] + l[i][j] + r[i][j])
+                if (v > ans[i][j])
                 {
-                    ans = dp[i][j] + l[i][j] + r[i][j];
-                    le = i;
-                    re = j;
+                    v = ans[i][j];
+                    a1 = i, a2 = j;
                 }
             }
         }
-        cout << le + 1 << " " << re + 1 << endl;
+        cout << a1 + 1 << " " << a2 + 1 << '\n';
     }
 
     return 0;

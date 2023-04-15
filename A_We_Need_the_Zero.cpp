@@ -12,15 +12,19 @@ int main()
     {
         lol n;
         cin >> n;
-        char c = 0;
-        for (lol i = 0; i < 2 * n + 1; i++)
+        lol a[n];
+        lol s = 0;
+        for (lol i = 0; i < n; i++)
         {
-            string s;
-            cin >> s;
-            for (auto e : s)
-                c ^= e;
+            cin >> a[i];
+            s ^= a[i];
         }
-        cout << c << '\n';
+        if (s == 0)
+            cout << 0 << '\n';
+        else if (n % 2)
+            cout << s << '\n';
+        else
+            cout << -1 << '\n';
     }
 
     return 0;
