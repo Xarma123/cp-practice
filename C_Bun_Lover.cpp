@@ -6,12 +6,13 @@ int main()
     std::ios::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    lol n;
-    cin >> n;
-    for (lol i = 0; i < n - 1; i++)
+    lol t;
+    cin >> t;
+    while (t--)
     {
-        lol a, b;
-        cin >> a >> b;
+        lol n;
+        cin >> n;
+        cout << n * 1ll * (n + 2) + 2 << '\n';
     }
 
     return 0;
