@@ -21,7 +21,6 @@ int main()
         while (s != e - 1)
         {
             lol m = (s + e) / 2ll;
-
             lol b[n];
             lol c = 0;
             for (lol i = 0; i < n; i++)
