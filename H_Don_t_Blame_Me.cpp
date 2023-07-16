@@ -17,53 +17,39 @@ int main()
         {
             cin >> a[i];
         }
-        lol dp[64][2];
-        lol p = 0;
+        lol dp[n][64];
         lol mod = 1e9 + 7;
-        for (lol i = 0; i < n; i++)
+        memset(dp, 0, sizeof(dp));
+        dp[0][a[0]]++;
+        for (lol i = 1; i < n; i++)
         {
-            if (i == 0)
+            for (lol j = 0; j < 64; j++)
             {
-                for (lol j = 0; j < 64; j++)
-                {
-                    dp[j][p] = 0;
-                    if (j == 0)
-                        dp[j][p]++;
-                    if (j == a[i])
-                        dp[j][p]++;
-                }
-                p++;
+                dp[i][j] += dp[i - 1][j];
+                dp[i][j] %= mod;
+                dp[i][(a[i] & j)] += dp[i - 1][j];
+                dp[i][(a[i] & j)] %= mod;
             }
-            else
-            {
-                for (lol j = 0; j < 64; j++)
-                    dp[j][p] = 0;
-                for (lol j = 0; j < 64; j++)
-                {
-                    dp[(j & a[i])][p] += dp[j][1 - p];
-                    dp[(j & a[i])][p] %= mod;
-                    dp[j][p] += dp[j][1 - p];
-                    dp[j][p] %= mod;
-                }
-                p = 1 - p;
-            }
+            dp[i][a[i]]++;
+            dp[i][a[i]] %= mod;
         }
+        
         lol ans = 0;
         for (lol i = 0; i < 64; i++)
         {
             lol c = 0;
-            for (lol j = 0; j < 6; j++)
+            for (lol j = 0; j < 8; j++)
             {
                 if ((i & (1ll << j)))
                     c++;
             }
             if (c == k)
             {
-                ans += dp[i][1 - p];
+                ans += dp[n - 1][i];
                 ans %= mod;
             }
         }
-        cout << ans << '\n';
+        cout << ans << '\n';    
     }
 
     return 0;
