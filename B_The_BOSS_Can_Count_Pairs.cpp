@@ -48,6 +48,6 @@ int main()
             }
         }
         cout<<ans<<'\n';
-        // cout << ans/2 << "\n";
+        
     }
 }
