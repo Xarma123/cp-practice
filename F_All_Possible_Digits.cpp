@@ -16,7 +16,7 @@ int main()
         vector<lol> b(n);
         for (lol i = 0; i < n; i++)
             cin >> a[i], b[i] = a[i];
-        // 0 - p-1
+        // 0 - p-
         sort(b.begin(), b.end());
         lol mn = 0;
         for (lol i = 0; i < n; i++)
