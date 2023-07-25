@@ -1,60 +1,86 @@
-/*
- * @lc app=leetcode id=2 lang=cpp
- *
- * [2] Add Two Numbers
- */
-
-// @lc code=start
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
-// struct ListNode {
-//       int val;
-//       ListNode *next;
-//       ListNode() : val(0), next(nullptr) {}
-//       ListNode(int x) : val(x), next(nullptr) {}
-//       ListNode(int x, ListNode *next) : val(x), next(next) {}
-//   };
-
-class Solution
+#include <bits/stdc++.h>
+using namespace std;
+#define lol long long
+int main()
 {
-public:
-    ListNode *addTwoNumbers(ListNode *l1, ListNode *l2)
+    std::ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    lol m, n;
+    cin >> m >> n;
+    lol a[n];
+    for (lol i = 0; i < n; i++)
     {
-        ListNode *h=new ListNode();
-        ListNode *cur = h;
-        int c = 0;
-        while (1)
-        {
-            int v = 0;
-            if (l1 != nullptr)
-            {
-                v += l1->val;
-                l1 = l1->next;
-            }
-            if (l2 != nullptr)
-            {
-                v += l2->val;
-                l2 = l2->next;
-            } 
-            v+=c;
-            cur->val = v % 10;
-            c = v / 10;
-            if (c == 0 && l1 == nullptr && l2 == nullptr)
-                break;
-             ListNode *n=new ListNode();
-            cur->next = n;
-            cur = cur->next;
-        }
-
-        return h;
+        cin >> a[i];
     }
-};
-// @lc code=end
+    sort(a, a + n);
+    lol i;
+    for (i = n - 2; i >= 0; i--)
+    {
+        if ((a[i + 1] - a[i]) * 1ll * (n - i - 1) <= m)
+        {
+            m -= (a[i + 1] - a[i]) * 1ll * (n - i - 1);
+        }
+        else
+        {
+            break;
+        }
+    }
+    lol ans = 0;
+    if (i < 0)
+    {
+        if (m > 0)
+        {
+            lol x = m / n;
+            lol r = m % n;
+            for (lol j = 0; j < r; j++)
+            {
+                lol c = max(a[0] - x - 1, 0ll);
+                ans += c * 1ll * c;
+            }
+            for (lol j = 0; j < n - r; j++)
+            {
+                lol c = max(a[0] - x, 0ll);
+                ans += c * 1ll * c;
+            }
+        }
+        else
+        {
+            for (lol i = 0; i < n; i++)
+            {
+                ans += a[0] * 1ll * a[0];
+            }
+        }
+    }
+    else
+    {
+        for (lol j = 0; j <= i; j++)
+        {
+            ans += a[j] * 1ll * a[j];
+        }
+        n = n - i - 1;
+        if (m > 0)
+        {
+            lol x = m / n;
+            lol r = m % n;
+            for (lol j = 0; j < r; j++)
+            {
+                lol c = max(a[i + 1] - x - 1, 0ll);
+                ans += c * 1ll * c;
+            }
+            for (lol j = 0; j < n - r; j++)
+            {
+                lol c = max(a[i + 1] - x, 0ll);
+                ans += c * 1ll * c;
+            }
+        }
+        else
+        {
+            for (lol i = 0; i < n; i++)
+            {
+                ans += a[i + 1] * 1ll * a[i + 1];
+            }
+        }
+    }
+    cout << ans;
+}
