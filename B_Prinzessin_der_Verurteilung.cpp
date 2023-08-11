@@ -1,6 +1,12 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
+string to_string(char c)
+{
+    string a = "";
+    a += c;
+    return a;
+}
 int main()
 {
     lol t;
@@ -11,58 +17,52 @@ int main()
         cin >> n;
         string a;
         cin >> a;
-        string ans = "";
-
-        map<char, vector<lol>> mp;
-
+        set<string> x;
         for (lol i = 0; i < n; i++)
         {
-            mp[a[i]].push_back(i);
+            x.insert(a.substr(i, 1));
         }
-        lol i;
-        for (i = 0; i < 26; i++)
+        for (lol i = 1; i < n; i++)
         {
-            if (!mp.count(char('a' + i)))
+            x.insert({a.substr(i - 1, 2)});
+        }
+        for (lol i = 2; i < n; i++)
+        {
+            x.insert({a.substr(i - 2, 3)});
+        }
+
+        string ans = "";
+        for (char c = 'a'; c <= 'z' && ans == ""; c++)
+        {
+            if (!x.count(to_string(c)))
             {
-                break;
+                ans = to_string(c);
             }
         }
-        if (i == 26)
+        for (char c = 'a'; c <= 'z' && ans == ""; c++)
         {
-            bool c = true;
-            for (auto j = mp.begin(); j != mp.end(); j++)
+            for (char c2 = 'a'; c2 <= 'z' && ans == ""; c2++)
             {
-                set<char> x;
-                for (lol k = 0; k < (*j).second.size(); k++)
+                if (!x.count(to_string(c) + to_string(c2)))
                 {
-                    if ((*j).second[k] + 1 < a.size())
-                        x.insert(a[(*j).second[k] + 1]);
+                    ans = to_string(c) + to_string(c2);
                 }
-                lol k;
-                for (k = 0; k < 26; k++)
+            }
+        }
+        for (char c = 'a'; c <= 'z' && ans == ""; c++)
+        {
+            for (char c2 = 'a'; c2 <= 'z' && ans == ""; c2++)
+            {
+                for (char c3 = 'a'; c3 <= 'z' && ans == ""; c3++)
                 {
-                    if (!x.count(char('a' + k)))
+                    if (!x.count(to_string(c) + to_string(c2) + to_string(c3)))
                     {
-                        break;
+                        ans = to_string(c) + to_string(c2) + to_string(c3);
                     }
                 }
-                if (k < 26)
-                {
-                    ans = ans + (*j).first + char('a' + k);
-                    c = false;
-                    break;
-                }
-            } 
-            if(c)
-            {
-                
             }
         }
-        else
-        {
-            ans = ans + char('a' + i);
-            break;
-        }
+        cout << ans << '\n';
     }
 
     return 0;
