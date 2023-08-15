@@ -12,19 +12,13 @@ int main()
     {
         lol n;
         cin >> n;
-        set<lol> p;
-        vector<vector<lol>> v;
+        vector<pair<lol, lol>> v;
         while (n--)
         {
             lol l, r, a, b;
             cin >> l >> r >> a >> b;
-            v.push_back({l, r, a, b});
-            p.insert(l);
-            p.insert(r);
-            p.insert(a);
-            p.insert(b);
+            v.push_back({b, l});
         }
-
         lol q;
         cin >> q;
         vector<lol> x;
@@ -33,11 +27,38 @@ int main()
             lol a;
             cin >> a;
             x.push_back(a);
-            p.insert(a);
         }
-        vector<lol> pt;
-        for (auto e : p)
-            pt.push_back(e);
-        
+        vector<pair<lol, lol>> a;
+        for (auto e : x)
+        {
+            a.push_back({e, e});
+        }
+        for (lol i = 0; i < v.size(); i++)
+        {
+            a.push_back(v[i]);
+            a.push_back({v[i].second, v[i].first});
+        }
+        map<lol, lol> d;
+        sort(a.begin(), a.end());
+        multiset<lol> as;
+        for (lol i = a.size() - 1; i >= 0; i--)
+        {
+            d[a[i].first] = max(d[a[i].first], a[i].first);
+            if (as.size())
+            {
+                d[a[i].first] = max(d[a[i].first], (*as.rbegin()));
+            }
+            if (a[i].second < a[i].first)
+            {
+                as.insert(d[a[i].first]);
+            }
+            if (a[i].second > a[i].first)
+            {
+                as.erase(as.find(d[a[i].second]));
+            }
+        }
+        for (auto e : x)
+            cout << d[e] << " ";
+        cout << '\n';
     }
 }
