@@ -4,6 +4,7 @@ using namespace std;
 lol p[100005];
 lol h[100005];
 lol sz[100005];
+//a
 map<lol, vector<lol>> mp;
 void dfs(lol c, lol pa)
 {
