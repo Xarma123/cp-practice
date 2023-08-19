@@ -1,0 +1,15 @@
+Class: integer
+0 10 1 0 3 5 
+
+Class: keyword
+Define For To Next Define For To Next Debug Str 
+
+Class: operator
+= = = + = = = * + 
+
+Class: others
+sum 0  a  sum sum   prod   a  prod prod   "The sum is " sum 
+
+Class: real number
+1.2 
+
