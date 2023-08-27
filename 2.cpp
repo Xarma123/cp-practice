@@ -1,73 +1,69 @@
 #include <bits/stdc++.h>
 using namespace std;
+#define lol long long
 
-class node
+lol find(lol a, lol p[])
 {
-public:
-    int val;
-    node *next;
-};
+    if (p[a] == a)
+        return a;
+    return p[a] = find(p[a],p);
+}
+void unio(lol a, lol b, lol p[], lol sz[], lol mx[])
+{
+    a = find(a, p);
+    b = find(b, p);
+    if (a != b)
+    {
+        if (sz[a] <= sz[b])
+        {
+            p[a] = b;
+            sz[b] += sz[a];
+            mx[b] = max(mx[b], mx[a]);
+        }
+        else
+        {
+            p[b] = a;
+            sz[a] += sz[b];
+            mx[a] = max(mx[b], mx[a]);
+        }
+    }
+}
 int main()
 {
-    node *head;
-    node *first = NULL;
-    node *second = NULL;
-    node *third = NULL;
-
-    first = new node();
-    second = new node();
-    third = new node();
-
-    first->val = 1;
-    second->val = 2;
-    third->val = 3;
-
-    first->next = second;
-    second->next = third;
-    third->next = NULL;
-
-    head = first;
-
-    int x = 1826;
-    node *nw = new node();
-    nw->val = x;
-    nw->next = head;
-    head = nw;
-
-    x = 1826;
-    int target = 2;
-
-    node *nya_node = new node();
-    nya_node->val = x;
-    node *ptr = head;
-
-    while (ptr->val != target)
+    std::ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    lol n;
+    cin >> n;
+    lol e;
+    cin >> e;
+    lol p[n + 1];
+    for (lol i = 0; i <= n; i++)
     {
-        ptr = ptr->next;
+        p[i] = i;
     }
-
-    node *temp = ptr->next;
-    ptr->next = nya_node;
-    nya_node->next = temp;
-
-    target = 2;
-    ptr = head;
-
-    while (ptr->next->val != target)
+    lol sz[n + 1];
+    for (lol i = 0; i <= n; i++)
     {
-        ptr = ptr->next;
+        sz[i] = 1;
     }
-    node *d = ptr->next;
-    ptr->next = ptr->next->next;
-    delete d;
-
-    ptr = head;
-
-    while (ptr)
+    lol mx[n + 1];
+    for (lol i = 0; i <= n; i++)
     {
-        cout << ptr->val << " ";
-        ptr = ptr->next;
+        mx[i] = i;
     }
+    lol ans = n * 1ll * (n + 1) / 2;
 
-    return 0;
+    while (e--)
+    {
+        lol a, b;
+        cin >> a >> b;
+        if (find(a, p) != find(b, p))
+        {
+            ans -= mx[find(a, p)] + mx[find(b, p)];
+            unio(a, b, p, sz, mx);
+            ans += mx[find(a, p)];
+        }
+        cout << ans << '\n';
+    }
 }
