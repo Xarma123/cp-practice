@@ -1,25 +1,17 @@
 #include <bits/stdc++.h>
-#define lol long long
 using namespace std;
-class SegmentTree
+#define lol long long
+class segtree
 {
 public:
     vector<lol> seg;
-    lol size;
-    SegmentTree(vector<lol> &a)
+    lol n;
+    segtree(lol c)
     {
-        size = 1;
-        while (size < a.size())
-            size *= 2;
-        seg.assign(2 * size, LONG_LONG_MAX);
-        for (int i = 0; i < a.size(); i++)
-        {
-            set(i, a[i]);
-        }
-    }
-    void set(lol i, lol v)
-    {
-        set(i, v, 0, 0, size);
+        n = 1;
+        while (n < c)
+            n = n * 2ll;
+        seg.assign(2ll * n, LONG_LONG_MAX);
     }
     void set(lol i, lol v, lol x, lol lx, lol rx)
     {
@@ -31,24 +23,30 @@ public:
         lol m = (lx + rx) / 2;
         if (i < m)
         {
-            set(i, v, 2 * x + 1, lx, m);
+            set(i, v, 2ll * x + 1, lx, m);
         }
         else
-            set(i, v, 2 * x + 2, m, rx);
-        seg[x] = min(seg[2 * x + 1],seg[2 * x + 2]);
+            set(i, v, 2ll * x + 2, m, rx);
+        seg[x] = min(seg[2ll * x + 1], seg[2ll * x + 2]);
     }
-    lol sum(lol l, lol r)
+    void set(lol i, lol v)
     {
-        return sum(l, r, 0, 0, size);
+        set(i, v, 0, 0, n);
     }
-    lol sum(lol l, lol r, lol x, lol lx, lol rx)
+    lol mn(lol l, lol r, lol x, lol lx, lol rx)
     {
-        if (rx <= l || lx >= r)
-            return LONG_LONG_MAX;
         if (lx >= l && rx <= r)
             return seg[x];
+        if (lx >= r || rx <= l)
+        {
+            return LONG_LONG_MAX;
+        }
         lol m = (lx + rx) / 2;
-        return min(sum(l, r, 2 * x + 1, lx, m),sum(l, r, 2 * x + 2, m, rx));
+        return min(mn(l, r, 2ll * x + 1, lx, m), mn(l, r, 2 * x + 2, m, rx));
+    }
+    lol mn(lol l, lol r)
+    {
+        return mn(l, r, 0, 0, n);
     }
 };
 int main()
@@ -58,31 +56,30 @@ int main()
     cout.tie(NULL);
     lol n, q;
     cin >> n >> q;
-    vector<lol> a;
+    segtree s(n);
     for (lol i = 0; i < n; i++)
+    {
+        lol v;
+        cin >> v;
+        s.set(i, v);
+    }
+    while (q--)
     {
         lol t;
         cin >> t;
-        a.push_back(t);
-    }
-    SegmentTree s(a);
-    while (q--)
-    {
-        lol c;
-        cin >> c;
-        if(c==2)
-        {lol a, b;
-        cin >> a >> b;
-        a--;
-        cout << s.sum(a, b) << endl;}
+        if (t == 1)
+        {
+            lol i, v;
+            cin >> i >> v;
+            i--;
+            s.set(i, v);
+        }
         else
         {
-            lol i,v;
-            cin>>i>>v;
-            i--;
-            s.set(i,v);
+            lol l, r;
+            cin >> l >> r;
+            l--;
+            cout << s.mn(l, r) << '\n';
         }
     }
-
-    return 0;
 }

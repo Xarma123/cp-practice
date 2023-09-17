@@ -1,54 +1,43 @@
 #include <bits/stdc++.h>
-#define lol long long
 using namespace std;
-class SegmentTree
+#define lol long long
+class sparse
 {
 public:
-    vector<lol> seg;
-    lol size;
-    SegmentTree(vector<lol> &a)
+    vector<vector<lol>> v;
+    lol n;
+    vector<lol> lg;
+    sparse(lol a[], lol c)
     {
-        size = 1;
-        while (size < a.size())
-            size *= 2;
-        seg.assign(2 * size, LONG_LONG_MAX);
-        for (int i = 0; i < a.size(); i++)
+        n = c;
+        v.assign(n, vector<lol>(30, LONG_LONG_MAX));
+        lg.assign(n + 5, 0);
+        lg[1] = 0;
+        for (lol i = 2; i < lg.size(); i++)
         {
-            set(i, a[i]);
+            lg[i] = lg[i / 2] + 1;
+        }
+
+        for (lol j = 0; j < 30; j++)
+        {
+            for (lol i = 0; i + (1ll << j) - 1 < n; i++)
+            {
+                if (j == 0)
+                {
+                    v[i][j] = a[i];
+                }
+                else
+                {
+                    v[i][j] = min(v[i][j - 1], v[i + (1ll << (j-1))][j - 1]);
+                }
+            }
         }
     }
-    void set(lol i, lol v)
+    lol mn(lol l, lol r)
     {
-        set(i, v, 0, 0, size);
-    }
-    void set(lol i, lol v, lol x, lol lx, lol rx)
-    {
-        if (rx - lx == 1)
-        {
-            seg[x] = v;
-            return;
-        }
-        lol m = (lx + rx) / 2;
-        if (i < m)
-        {
-            set(i, v, 2 * x + 1, lx, m);
-        }
-        else
-            set(i, v, 2 * x + 2, m, rx);
-        seg[x] = min(seg[2 * x + 1],seg[2 * x + 2]);
-    }
-    lol sum(lol l, lol r)
-    {
-        return sum(l, r, 0, 0, size);
-    }
-    lol sum(lol l, lol r, lol x, lol lx, lol rx)
-    {
-        if (rx <= l || lx >= r)
-            return LONG_LONG_MAX;
-        if (lx >= l && rx <= r)
-            return seg[x];
-        lol m = (lx + rx) / 2;
-        return min(sum(l, r, 2 * x + 1, lx, m),sum(l, r, 2 * x + 2, m, rx));
+
+        lol j = lg[r + 1 - l];
+        return min(v[l][j], v[r - ((1ll << j) - 1)][j]);
     }
 };
 int main()
@@ -58,21 +47,19 @@ int main()
     cout.tie(NULL);
     lol n, q;
     cin >> n >> q;
-    vector<lol> a;
+    lol a[n];
     for (lol i = 0; i < n; i++)
     {
-        lol t;
-        cin >> t;
-        a.push_back(t);
+        cin >> a[i];
     }
-    SegmentTree s(a);
+    sparse s(a, n);
+
     while (q--)
     {
-        lol a, b;
-        cin >> a >> b;
-        a--;
-        cout << s.sum(a, b) << endl;
+        lol l, r;
+        cin >> l >> r;
+        l--;
+        r--;
+        cout << s.mn(l, r) << '\n';
     }
-
-    return 0;
 }

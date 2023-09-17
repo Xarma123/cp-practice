@@ -1,51 +1,68 @@
 #include <bits/stdc++.h>
-#define lol long long
 using namespace std;
-class SegmentTree
+#define lol long long
+class segtree
 {
 public:
     vector<lol> seg;
-    lol size;
-    SegmentTree(lol n)
+    vector<lol> lazy;
+    lol n;
+    segtree(lol c)
     {
-        size = 1;
-        while (size < n)
-            size *= 2;
-        size *= 2;
-        seg.assign(2 * size, 0);
+        n = 1;
+        while (n < c)
+            n = n * 2ll;
+        seg.assign(2ll * n, 0ll);
+        lazy.assign(2ll * n, 0ll);
     }
-    void set(lol i, lol v)
+    void propagate(lol x, lol lx, lol rx)
     {
-        set(i, v, 0, 0, size);
-    }
-    void set(lol i, lol v, lol x, lol lx, lol rx)
-    {
+
+        seg[x] += (rx - lx) * 1ll * lazy[x];
         if (rx - lx == 1)
         {
-            seg[x] = v;
+            lazy[x] = 0;
+            return;
+        }
+        lazy[2ll * x + 1] += lazy[x];
+        lazy[2ll * x + 2] += lazy[x];
+        lazy[x] = 0;
+    }
+    void add(lol l, lol r, lol v, lol x, lol lx, lol rx)
+    {
+        propagate(x, lx, rx);
+        if (lx >= l && rx <= r)
+        {
+            lazy[x] += v;
+            propagate(x, lx, rx);
+            return;
+        }
+        if (lx >= r || rx <= l)
+        {
             return;
         }
         lol m = (lx + rx) / 2;
-        if (i < m)
-        {
-            set(i, v, 2 * x + 1, lx, m);
-        }
-        else
-            set(i, v, 2 * x + 2, m, rx);
-        seg[x] = (seg[2 * x + 1] + seg[2 * x + 2]);
+        add(l, r, v, 2 * x + 1, lx, m);
+        add(l, r, v, 2 * x + 2, m, rx);
+        seg[x] = seg[2 * x + 1] + seg[2 * x + 2];
     }
-    lol sum(lol l, lol r)
+    void add(lol l, lol r, lol v)
     {
-        return sum(l, r, 0, 0, size);
+        add(l, r, v, 0, 0, n);
     }
     lol sum(lol l, lol r, lol x, lol lx, lol rx)
     {
-        if (rx <= l || lx >= r)
-            return 0;
+        propagate(x, lx, rx);
         if (lx >= l && rx <= r)
             return seg[x];
+        if (lx >= r || rx <= l)
+            return 0;
         lol m = (lx + rx) / 2;
-        return (sum(l, r, 2 * x + 1, lx, m) + sum(l, r, 2 * x + 2, m, rx));
+        return sum(l, r, 2 * x + 1, lx, m) + sum(l, r, 2 * x + 2, m, rx);
+    }
+    lol sum(lol l, lol r)
+    {
+        return sum(l, r, 0, 0, n);
     }
 };
 int main()
@@ -55,33 +72,30 @@ int main()
     cout.tie(NULL);
     lol n, q;
     cin >> n >> q;
-    vector<lol> a;
+    lol a[n];
+    segtree s(n);
     for (lol i = 0; i < n; i++)
+    {
+        cin >> a[i];
+        s.add(i, i + 1, a[i]);
+    }
+    while (q--)
     {
         lol t;
         cin >> t;
-        a.push_back(t);
-    }
-    SegmentTree s(a.size());
-    while (q--)
-    {
-        lol c;
-        cin >> c;
-        if (c == 1)
+        if (t == 1)
         {
-            lol a, b, u;
-            cin >> a >> b >> u;
-            a--;
-            s.set(a, u + s.sum(a, a + 1));
-            s.set(b, -u + s.sum(b, b + 1));
+            lol l, r, v;
+            cin >> l >> r >> v;
+            l--;
+            s.add(l, r, v);
         }
         else
         {
-            lol k;
-            cin >> k;
-            cout << s.sum(0, k) + a[k - 1] << endl;
+            lol i;
+            cin >> i;
+            i--;
+            cout << s.sum(i, i + 1) << '\n';
         }
     }
-
-    return 0;
 }
