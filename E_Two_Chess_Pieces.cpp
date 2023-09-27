@@ -55,7 +55,9 @@ int main()
         mp[a].push_back(b);
         mp[b].push_back(a);
     }
-    dfs(1, -1);
+  
+
+    dfs(1, 0);
     lol m1;
     cin >> m1;
     vector<lol> b(m1);

@@ -1,28 +1,6 @@
 #include <bits/stdc++.h>
-#define lol long long
 using namespace std;
-lol ncr[61][61];
-lol m = 998244353;
-map<lol, lol> w;
-map<lol, lol> l;
-lol loss(lol n);
-lol win(lol n)
-{
-    if (n == 0)
-        return 0;
-    if (w.count(n))
-        return w[n];
-
-    return w[n] = ((ncr[n - 1][n / 2] + loss(n - 2)) % m);
-}
-lol loss(lol n)
-{
-    if (l.count(n))
-        return l[n];
-    if (n == 0)
-        return 0;
-    return l[n] = ((ncr[n][n / 2] - win(n) - 1 + m) % m);
-}
+#define lol long long
 int main()
 {
     std::ios::sync_with_stdio(false);
@@ -30,30 +8,53 @@ int main()
     cout.tie(NULL);
     lol t;
     cin >> t;
-
-    for (lol i = 0; i < 61; i++)
-    {
-        for (lol j = 0; j < 61; j++)
-        {
-            if (i == j)
-                ncr[i][j] = 1;
-            else if (i < j)
-                ncr[i][j] = 0;
-            else if (j == 0)
-                ncr[i][j] = 1;
-            else if (j == 1)
-                ncr[i][j] = i;
-            else
-                ncr[i][j] = (ncr[i - 1][j] + ncr[i - 1][j - 1]) % m;
-        }
-    }
-
     while (t--)
     {
         lol n;
         cin >> n;
-        cout << win(n) << " " << loss(n) << " " << 1 << endl;
-    }
+        lol a[n];
+        for (lol i = 0; i < n; i++)
+        {
+            cin >> a[i];
+        }
+        if (n == 1)
+        {
+            cout << max(0ll, a[0]) << '\n';
+            continue;
+        }
+        lol ans = 0;
+        lol j = n;
+        for (lol i = 0; i < n; i++)
+        {
+            if (j == n)
+            {
+                if (a[i] >= 0 && (i % 2 == 0))
+                {
+                    j = i;
+                    ans += a[i];
+                }
+            }
+            else
+            {
+                if (a[i] >= 0)
+                    ans += a[i];
+            }
+        }
 
-    return 0;
+        lol sum = 0;
+        for (lol i = 0; i < j; i++)
+        {
+            if (a[i] >= 0)
+                sum += a[i];
+        }
+        if (j > 0)
+        {
+            if (a[1] >= 0)
+                ans += max(a[0] + sum, sum - a[1]);
+            else
+                ans += sum;
+        }
+
+        cout << ans << '\n';
+    }
 }
