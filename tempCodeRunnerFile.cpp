@@ -6,81 +6,42 @@ int main()
     std::ios::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    lol m, n;
-    cin >> m >> n;
+    lol n;
+    cin >> n;
     lol a[n];
     for (lol i = 0; i < n; i++)
     {
         cin >> a[i];
     }
-    sort(a, a + n);
-    lol i;
-    for (i = n - 2; i >= 0; i--)
-    {
-        if ((a[i + 1] - a[i]) * 1ll * (n - i - 1) <= m)
-        {
-            m -= (a[i + 1] - a[i]) * 1ll * (n - i - 1);
-        }
-        else
-        {
-            break;
-        }
-    }
+
+    lol dp[n][2001];
     lol ans = 0;
-    if (i < 0)
+    for (lol i = 0; i < n; i++)
     {
-        if (m > 0)
+        if (i == 0)
         {
-            lol x = m / n;
-            lol r = m % n;
-            for (lol j = 0; j < r; j++)
+            for (lol j = 0; j < 2001; j++)
             {
-                lol c = max(a[0] - x - 1, 0ll);
-                ans += c * 1ll * c;
+                dp[i][j] = 0;
             }
-            for (lol j = 0; j < n - r; j++)
-            {
-                lol c = max(a[0] - x, 0ll);
-                ans += c * 1ll * c;
-            }
+            dp[i][a[i]] = 1;
         }
         else
         {
-            for (lol i = 0; i < n; i++)
+            for (lol j = 0; j < 2001; j++)
             {
-                ans += a[0] * 1ll * a[0];
+                dp[i][j] = dp[i - 1][j];
+            }
+            dp[i][a[i]] = max(dp[i][a[i]], 1ll);
+            if (a[i] % 3 == 0)
+            {
+                dp[i][a[i]] = max(dp[i][a[i]], dp[i - 1][(a[i] / 3)] + 1);
             }
         }
     }
-    else
+    for (lol j = 0; j < 2001; j++)
     {
-        for (lol j = 0; j <= i; j++)
-        {
-            ans += a[j] * 1ll * a[j];
-        }
-        n = n - i - 1;
-        if (m > 0)
-        {
-            lol x = m / n;
-            lol r = m % n;
-            for (lol j = 0; j < r; j++)
-            {
-                lol c = max(a[i + 1] - x - 1, 0ll);
-                ans += c * 1ll * c;
-            }
-            for (lol j = 0; j < n - r; j++)
-            {
-                lol c = max(a[i + 1] - x, 0ll);
-                ans += c * 1ll * c;
-            }
-        }
-        else
-        {
-            for (lol i = 0; i < n; i++)
-            {
-                ans += a[i + 1] * 1ll * a[i + 1];
-            }
-        }
+        ans = max(ans, dp[n - 1][j]);
     }
     cout << ans;
 }

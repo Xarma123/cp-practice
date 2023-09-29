@@ -1,42 +1,51 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+
 using namespace std;
-#define lol long long
-int main()
-{
-    std::ios::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
-    lol n, m1, m2, m3, m4;
-    cin >> n >> m1 >> m2 >> m3 >> m4;
-    vector<string> a[4];
-    for (lol i = 0; i < n; i++)
-    {
-        string s;
-        cin >> s;
-        lol h;
-        cin >> h;
-        if (h >= m1 && h < m2)
-            a[0].push_back(s);
-        else if (h >= m2 && h < m3)
-            a[1].push_back(s);
-        else if (h >= m3 && h < m4)
-            a[2].push_back(s);
-        else
-            a[3].push_back(s);
+
+const int MOD = 998244353;
+
+int labeledTrees(int N, vector<int>& D) {
+    // Initialize a 2D DP table to store the counts
+    vector<vector<int>> dp(N + 1, vector<int>(N + 1, 0));
+
+    // Base case: There's only one way to create a tree with one vertex
+    dp[1][0] = 1;
+
+    // Iterate through the number of vertices
+    for (int i = 2; i <= N; ++i) {
+        // Iterate through the possible outdegrees for vertex i
+        for (int j = 0; j < N; ++j) {
+            if (dp[i - 1][j]) {
+                // If there's a way to reach vertex i-1 with outdegree j,
+                // we can create a tree with vertex i having outdegree k
+                for (int k = 0; k <= D[i - 1]; ++k) {
+                    if (j + k <= N) {
+                        dp[i][j + k] += dp[i - 1][j];
+                        dp[i][j + k] %= MOD;
+                    }
+                }
+            }
+        }
     }
-    cout << "S:\n";
-    for (auto e : a[0])
-        cout << e << '\n';
-    cout << "M:\n";
-    for (auto e : a[1])
-        cout << e << '\n';
-    cout << "L:\n";
-    for (auto e : a[2])
-        cout << e << '\n';
-    cout << "X:\n";
-    for (auto e : a[3])
-    {
-        cout << e << '\n';
-    }
+
+    // The final result is stored in dp[N][N-1], which represents the
+    // number of labeled trees with N vertices and outdegree N-1
+    return dp[N][N - 1];
+}
+
+int main() {
+    int N;
+    cin >> N;
+    vector<int> D(N);
     
+    for (int i = 0; i < N; ++i) {
+        cin >> D[i];
+    }
+
+    // Calculate and print the answer
+    int result = labeledTrees(N, D);
+    cout << result << endl;
+
+    return 0;
 }

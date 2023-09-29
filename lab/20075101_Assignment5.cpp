@@ -130,6 +130,7 @@ bool stack_iterate(const string &input_str)
 
     while (!st.empty())
     {
+        cout << lexeme_begin << endl;
         temp.clear();
         string matched = lexeme_begin != 0 ? reverse_transforms(input_str.substr(0, lexeme_begin)) : " ";
 
@@ -181,47 +182,48 @@ bool stack_iterate(const string &input_str)
     return true;
 }
 
-string beautify(const string &input_str)
-{
-    int total = 15;
-    int rem = total - input_str.length();
-    return input_str + string(rem, ' ');
-}
+// string beautify(const string &input_str)
+// {
+//     int total = 35;
+//     int rem = total - input_str.length();
+//     return input_str + string(rem, ' ');
+// }
 
-string rev_beautify(const string &input_str)
-{
-    if (input_str.empty())
-    {
-        return input_str; // Return the empty string as is
-    }
+// string rev_beautify(const string &input_str)
+// {
+//     if (input_str.empty())
+//     {
+//         return input_str; // Return the empty string as is
+//     }
 
-    int rem = 25 - input_str.length();
-    string answer = "";
+//     int rem = 5 - input_str.length();
+//     string answer = "";
 
-    if (input_str[0] == 'o' || input_str[0] == 'm' || input_str[0] == 'S' || input_str[0] == 'A')
-    {
-        int remaining = 10;
-        answer += string(remaining, ' ');
-    }
+//     if (input_str[0] == 'o' || input_str[0] == 'm' || input_str[0] == 'S' || input_str[0] == 'A')
+//     {
+//         int remaining = 10;
+//         answer += string(remaining, ' ');
+//     }
 
-    answer += input_str + string(rem, ' ');
-    return answer;
-}
+//     answer += input_str + string(rem, ' ');
+//     return answer;
+// }
 
 void print_line()
 {
     cout << "--------------------------------------------------------------------------------------------------------" << endl;
-    cout << rev_beautify("Matched") << beautify("Stack") << beautify("Input") << rev_beautify("Action") << endl;
+    cout << ("Matched") << ("Stack") << ("Input") << ("Action") << endl;
     cout << "--------------------------------------------------------------------------------------------------------" << endl;
     for (const auto &item : output_to_print)
     {
+
         if (item[0].empty())
         {
             cout << " ";
         }
         else
         {
-            cout << rev_beautify(item[0]) << beautify(item[1]) << beautify(item[2]) << rev_beautify(item[3]) << endl;
+            cout << (item[0]) << (item[1]) << (item[2]) << (item[3]) << endl;
         }
     }
 }
