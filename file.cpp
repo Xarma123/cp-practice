@@ -1,28 +1,54 @@
 #include <bits/stdc++.h>
 using namespace std;
 #define lol long long
-int ans(vector<int> a, int k)
-{
-    sort(a.begin(), a.end());
-    map<int, int> x;
-    int ans = 0;
-    for (int i = 0; i < a.size(); i++)
-    {
-        int j = i + 1;
-        while (j < a.size() && a[j] == a[i])
-            j++;
-        if (x.count(k - a[i]))
-            ans++;
-        mp[a[i]] = j - i;
-        i = j - 1;
-    }
-    if (k % 2 == 0 && mp[k / 2] > 1)
-        ans++;
-    return ans;
-}
 int main()
 {
     std::ios::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
+    lol n;
+    cin >> n;
+    lol ind[n];
+    memset(ind, 0, sizeof(ind));
+    lol m;
+    cin >> m;
+    map<lol, vector<lol>> mp;
+    while (m--)
+    {
+        lol a, b;
+        cin >> a >> b;
+        a--;
+        b--;
+        ind[a]++;
+        ind[b]++;
+        mp[a].push_back(b);
+        mp[b].push_back(a);
+    }
+    queue<lol> q;
+    for (lol i = 0; i < n; i++)
+    {
+        if (ind[i] == 1)
+            q.push(i);
+    }
+    while (!q.empty())
+    {
+        lol c = q.front();
+        q.pop();
+        if (ind[c] != 1)
+            continue;
+        for (auto e : mp[c])
+        {
+            ind[e]--;
+            if (ind[e] == 1)
+                q.push(e);
+        }
+        ind[c] = LONG_LONG_MAX;
+    }
+    lol ans = 0;
+    for (lol i = 0; i < n; i++)
+    {
+        if (ind[i] <= 0)
+            ans++;
+    }
+    cout << ans;
 }
