@@ -8,47 +8,34 @@ int main()
     cout.tie(NULL);
     lol n;
     cin >> n;
-    lol ind[n];
-    memset(ind, 0, sizeof(ind));
-    lol m;
-    cin >> m;
-    map<lol, vector<lol>> mp;
-    while (m--)
-    {
-        lol a, b;
-        cin >> a >> b;
-        a--;
-        b--;
-        ind[a]++;
-        ind[b]++;
-        mp[a].push_back(b);
-        mp[b].push_back(a);
-    }
-    queue<lol> q;
+    lol a[n];
     for (lol i = 0; i < n; i++)
     {
-        if (ind[i] == 1)
-            q.push(i);
+        cin >> a[i];
     }
-    while (!q.empty())
-    {
-        lol c = q.front();
-        q.pop();
-        if (ind[c] != 1)
-            continue;
-        for (auto e : mp[c])
-        {
-            ind[e]--;
-            if (ind[e] == 1)
-                q.push(e);
-        }
-        ind[c] = LONG_LONG_MAX;
-    }
-    lol ans = 0;
+    lol b[n];
     for (lol i = 0; i < n; i++)
     {
-        if (ind[i] <= 0)
-            ans++;
+        b[i] = a[i] - i;
+    }
+    stack<lol> x;
+    x.push(-1);
+    lol pv[n];
+    for (lol i = 0; i < n; i++)
+    {
+        while (x.top() != -1 && b[x.top()] >= b[i])
+            x.pop();
+        pv[i] = x.top();
+        x.push(i);
+    }
+    lol ans = LONG_LONG_MIN;
+    lol dp[n];
+    for (lol i = 0; i < n; i++)
+    {
+        dp[i] = (i - pv[i]) * 1ll * a[i] - (((i - pv[i]) * 1ll * (i - pv[i] - 1)) / 2ll);
+        if (pv[i] >= 0)
+            dp[i] += dp[pv[i]];
+        ans = max(ans, dp[i]);
     }
     cout << ans;
 }
