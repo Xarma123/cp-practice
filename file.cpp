@@ -8,34 +8,35 @@ int main()
     cout.tie(NULL);
     lol n;
     cin >> n;
-    lol a[n];
+    vector<vector<lol>> a(n, vector<lol>(4));
+    vector<lol> x, y;
     for (lol i = 0; i < n; i++)
     {
-        cin >> a[i];
+        cin >> a[i][0] >> a[i][1] >> a[i][2] >> a[i][3];
+        if (a[i][0] == a[i][2] && a[i][1] == a[i][3])
+        {
+            x.push_back(a[i][0]);
+            y.push_back(a[i][1]);
+        }
+        else if (a[i][0] == a[i][2])
+        {
+            x.push_back(a[i][0]);
+        }
+        else
+        {
+            y.push_back(a[i][1]);
+        }
     }
-    lol b[n];
-    for (lol i = 0; i < n; i++)
+    sort(x.begin(), x.end());
+    sort(y.begin(), y.end());
+    lol ans = 0;
+    for (auto e : x)
     {
-        b[i] = a[i] - i;
+        ans += abs(e - x[x.size() / 2]);
     }
-    stack<lol> x;
-    x.push(-1);
-    lol pv[n];
-    for (lol i = 0; i < n; i++)
+    for (auto e : y)
     {
-        while (x.top() != -1 && b[x.top()] >= b[i])
-            x.pop();
-        pv[i] = x.top();
-        x.push(i);
-    }
-    lol ans = LONG_LONG_MIN;
-    lol dp[n];
-    for (lol i = 0; i < n; i++)
-    {
-        dp[i] = (i - pv[i]) * 1ll * a[i] - (((i - pv[i]) * 1ll * (i - pv[i] - 1)) / 2ll);
-        if (pv[i] >= 0)
-            dp[i] += dp[pv[i]];
-        ans = max(ans, dp[i]);
+        ans += abs(e - y[y.size() / 2]);
     }
     cout << ans;
 }
