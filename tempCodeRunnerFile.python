@@ -1,0 +1,16 @@
+ans=0
+c=0
+
+import random
+
+for i in range(10000000):
+    cards=[1]*4+[2]*4
+    new=random.sample(cards,4)
+    t=random.choice(new)
+    if t==1:
+        t=random.choice(new)
+        if t==1:
+            ans+=sum(new)
+            c+=1
+print(ans/c)
+
