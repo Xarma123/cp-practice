@@ -1,63 +1,37 @@
 #include <bits/stdc++.h>
-#define lol long long
 using namespace std;
+#define lol long long
 int main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
     lol n, m, k;
     cin >> n >> m >> k;
-    lol ar[n];
-    for (lol i = 0; i < n; i++)
+    map<lol, lol> mp;
+    while (m--)
     {
-        ar[i] = n - 1;
+        lol x, y;
+        cin >> x >> y;
+        mp[x]++;
+        mp[y]++;
     }
-    set<lol> x;
-    for (lol i = 0; i < m; i++)
+    bool ans = true;
+    for (lol i = 1; i <= n; i++)
     {
-        lol a, b;
-        cin >> a >> b;
-        if (a == 1)
-            x.insert(b);
-        if (b == 1)
-            x.insert(a);
-        ar[a - 1]--;
-        ar[b - 1]--;
-    }
-    lol c = 0;
-    for (lol i = 2; i <= n; i++)
-    {
-        if (!x.count(i))
+        lol r = n - 1 - mp[i];
+        if (i == 1)
         {
-            if (ar[i - 1] == 1)
-                c++;
+            if (r < k)
+                ans = false;
         }
+        if (r == 0)
+            ans = false;
     }
-
-    bool f = true;
-    if (c > k)
+    if (ans)
     {
-        f = false;
+        
     }
-    if (ar[0] < k && f)
-    {
-        f = false;
-    }
-    if (f)
-    {
-        for (lol i = 1; i < n; i++)
-        {
-            if (ar[i] < 1)
-            {
-                f = false;
-                break;
-            }
-        }
-    }
-    if (f)
-    {
-        cout << "possible";
-    }
-    else
-        cout << "impossible";
 
     return 0;
 }
