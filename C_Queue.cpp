@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
+// a
 int main()
 {
     std::ios::sync_with_stdio(false);
@@ -18,7 +19,8 @@ int main()
         v.push_back({q, s});
     }
     sort(v.begin(), v.end());
-    vector<string> x;
+    lol q = 1e9;
+    vector<pair<string, lol>> x;
     lol i;
     for (i = 0; i < n; i++)
     {
@@ -27,26 +29,22 @@ int main()
             break;
         }
         if (v[i].first == x.size())
-            x.push_back(v[i].second);
+        {
+            x.push_back({v[i].second, (q--)});
+        }
         else
-            x.insert(x.begin() + v[i].first, v[i].second);
+        {
+            x.insert(x.begin() + v[i].first, {v[i].second, (q--)});
+        }
     }
     if (i != n)
         cout << -1;
     else
     {
-        lol q = 1e9;
+
         for (lol i = 0; i < n; i++)
         {
-            cout << x[i] << " ";
-            if (i)
-            {
-                if (v[i].first > v[i - 1].first)
-                {
-                    q--;
-                }
-            }
-            cout << q << endl;
+            cout << x[i].first << " " << x[i].second << endl;
         }
     }
 

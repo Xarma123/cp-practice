@@ -6,82 +6,66 @@ int main()
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    string s;
-    cin >> s;
-    lol n = s.size();
-    lol b = 0;
-    for (lol i = 0; i < s.size(); i++)
-    {
-        if (s[i] == '1')
-            b++;
-    }
-    lol pod[n];
-    lol pev[n];
+    lol n, m;
+    cin >> n >> m;
+    lol a[n], b[m];
     for (lol i = 0; i < n; i++)
     {
-        if (i % 2 == 0)
-        {
-            pev[i] = (s[i] - '0');
-            pod[i] = 0;
-        }
-        else
-        {
-            pod[i] = (s[i] - '0');
-            pev[i] = 0;
-        }
-        if (i)
-        {
-            pev[i] += pev[i - 1];
-            pod[i] += pod[i - 1];
-        }
+        cin >> a[i];
     }
-    if (2ll * b - 1 > n)
+    for (lol i = 0; i < m; i++)
     {
-        cout << -1;
+        cin >> b[i];
     }
-    else if (b == 0)
+    vector<lol> cary(max(n, m), 0);
+    vector<lol> ans(max(n, m), 0);
+    for (lol i = 0; i < cary.size(); i++)
     {
-        cout << 0;
+
+        while (ans.size() < cary.size())
+            ans.push_back(0);
+        lol v = cary[i];
+        if (i < n)
+            v += a[i];
+        if (i < m)
+            v += b[i];
+        if (v < 0)
+        {
+            ans[i] = 1;
+            while (cary.size() < i + 2)
+                cary.push_back(0);
+            cary[i + 1]++;
+        }
+        if (v == 0)
+        {
+            ans[i] = 0;
+        }
+        if (v == 1)
+        {
+            ans[i] = 1;
+        }
+        if (v == 2)
+        {
+            ans[i] = 0;
+            while (cary.size() < i + 2)
+                cary.push_back(0);
+            cary[i + 1]--;
+        }
+        if (v == 3)
+        {
+            ans[i] = 1;
+            while (cary.size() < i + 2)
+                cary.push_back(0);
+            cary[i + 1]--;
+        }
     }
-    else
+    while (ans.size() && ans.back() == 0)
     {
-        lol ans = LONG_LONG_MAX;
-        lol j = n - 1 - (2ll * b - 2);
-        if (j % 2 == 0)
-        {
-            lol v = pev[n - 1];
-            if (j)
-                v -= pev[j - 1];
-            ans = min(ans, b - v);
-        }
-        else
-        {
-            lol v = pod[n - 1];
-            if (j)
-                v -= pod[j - 1];
-            ans = min(ans, b - v);
-        }
-        j = n - 2 - (2ll * b - 2);
-        if (j >= 0)
-        {
-            if (j % 2 == 0)
-            {
-                lol v = pev[n - 2];
-                if (j)
-                    v -= pev[j - 1];
-                ans = min(ans, b - v);
-            }
-            else
-            {
-                lol v = pod[n - 2];
-                if (j)
-                    v -= pod[j - 1];
-                ans = min(ans, b - v);
-            }
-        }
-        
-        cout << ans;
+        ans.pop_back();
     }
+
+    for (auto e : ans)
+        cout << e << " ";
 
     return 0;
 }
