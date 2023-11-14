@@ -6,66 +6,72 @@ int main()
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    lol n, m;
-    cin >> n >> m;
-    lol a[n], b[m];
+    lol n;
+    cin >> n;
+    lol a[n];
     for (lol i = 0; i < n; i++)
     {
         cin >> a[i];
     }
-    for (lol i = 0; i < m; i++)
+    lol dp[n][n][3];
+    for (lol l = 0; l < n; l++)
     {
-        cin >> b[i];
+        for (lol i = 0, j = l; j < n; i++, j++)
+        {
+            for (lol q = 0; q < 3ll; q++)
+            {
+                if (l + 1 == 1)
+                {
+                    dp[i][j][q] = 0;
+                }
+                else if (l + 1 == 2)
+                {
+                    dp[i][j][q] = 1;
+                }
+                else if (q == 0)
+                {
+                    lol v = a[i] + a[i + 1];
+                    dp[i][j][q] = 1;
+                    // i+2  j
+                    if (i + 3 <= j && a[i + 2] + a[i + 3] == v)
+                        dp[i][j][q] = max(dp[i][j][q], 1 + dp[i + 2][j][0]);
+                    if (j - 1 >= i + 2 && a[j] + a[j - 1] == v)
+                        dp[i][j][q] = max(dp[i][j][q], 1 + dp[i + 2][j][1]);
+                    if (i + 2 != j && a[i + 2] + a[j] == v)
+                        dp[i][j][q] = max(dp[i][j][q], 1 + dp[i + 2][j][2]);
+                }
+                else if (q == 1)
+                {
+                    lol v = a[j] + a[j - 1];
+                    dp[i][j][q] = 1;
+                    // i  j-2
+                    if (i + 3 <= j && a[i] + a[i + 1] == v)
+                        dp[i][j][q] = max(dp[i][j][q], 1 + dp[i][j - 2][0]);
+                    if (j - 1 >= i + 2 && a[j - 2] + a[j - 3] == v)
+                        dp[i][j][q] = max(dp[i][j][q], 1 + dp[i][j - 2][1]);
+                    if (i != j - 2 && a[i] + a[j - 2] == v)
+                        dp[i][j][q] = max(dp[i][j][q], 1 + dp[i][j - 2][2]);
+                }
+                else
+                {
+                    lol v = a[i] + a[j];
+                    dp[i][j][q] = 1;
+                    // i+1   j-1
+                    if (i + 3 <= j && a[i + 1] + a[i + 2] == v)
+                    {
+                        dp[i][j][q] = max(dp[i][j][q], 1 + dp[i + 1][j - 1][0]);
+                    }
+                    if (j - 2 >= i + 1 && a[j - 2] + a[j - 1] == v)
+                        dp[i][j][q] = max(dp[i][j][q], dp[i + 1][j - 1][1] + 1);
+                    if (i + 1 != j - 1 && a[i + 1] + a[j - 1] == v)
+                    {
+                        dp[i][j][q] = max(dp[i][j][q], dp[i + 1][j - 1][q] + 1);
+                    }
+                }
+            }
+        }
     }
-    vector<lol> cary(max(n, m), 0);
-    vector<lol> ans(max(n, m), 0);
-    for (lol i = 0; i < cary.size(); i++)
-    {
-
-        while (ans.size() < cary.size())
-            ans.push_back(0);
-        lol v = cary[i];
-        if (i < n)
-            v += a[i];
-        if (i < m)
-            v += b[i];
-        if (v < 0)
-        {
-            ans[i] = 1;
-            while (cary.size() < i + 2)
-                cary.push_back(0);
-            cary[i + 1]++;
-        }
-        if (v == 0)
-        {
-            ans[i] = 0;
-        }
-        if (v == 1)
-        {
-            ans[i] = 1;
-        }
-        if (v == 2)
-        {
-            ans[i] = 0;
-            while (cary.size() < i + 2)
-                cary.push_back(0);
-            cary[i + 1]--;
-        }
-        if (v == 3)
-        {
-            ans[i] = 1;
-            while (cary.size() < i + 2)
-                cary.push_back(0);
-            cary[i + 1]--;
-        }
-    }
-    while (ans.size() && ans.back() == 0)
-    {
-        ans.pop_back();
-    }
-
-    for (auto e : ans)
-        cout << e << " ";
+    cout << max(dp[0][n - 1][0], max(dp[0][n - 1][1], dp[0][n - 1][2]));
 
     return 0;
 }

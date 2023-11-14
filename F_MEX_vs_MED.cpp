@@ -1,8 +1,30 @@
 #include <bits/stdc++.h>
 #define lol long long
 using namespace std;
+class q1;
+class qq
+{
+public:
+    qq()
+    {
+        cout << 21;
+    }
+    void f(q1 b)
+    {
+        cout << b.a;
+    }
+    friend class q1;
+};
+class q1
+{
+    lol a;
+};
+
 int main()
 {
+    qq qqq;
+    q1 qqqq;
+
     std::ios::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
