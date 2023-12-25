@@ -223,7 +223,6 @@ int main()
             }
         }
         cout << dp[0].first << " " << dp[0].second << '\n';
-        // cout << 1 << endl;
     }
 
     return 0;
