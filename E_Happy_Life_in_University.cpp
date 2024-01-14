@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 #define lol long long
+
 class segtree
 {
 public:
@@ -65,28 +66,99 @@ public:
         return mx(l, r, 0, 0, n);
     }
 };
+
+vector<lol> mp[300005];
+lol a[300005];
+lol in[300005];
+lol out[300005];
+vector<lol> euler;
+lol col[300005];
+
+vector<lol> all[300005];
+void dfs(lol c)
+{
+    in[c] = euler.size();
+    euler.push_back(c);
+    if (col[a[c]] != -1)
+        all[col[a[c]]].push_back(c);
+    lol temp = col[a[c]];
+    col[a[c]] = c;
+    for (auto e : mp[c])
+    {
+        dfs(e);
+    }
+    col[a[c]] = temp;
+    out[c] = euler.size();
+}
+lol ans = 0;
+void dfs(lol c, segtree &s)
+{
+
+    for (auto e : mp[c])
+    {
+        dfs(e, s);
+    }
+
+    for (auto e : all[c])
+    {
+        s.add(in[e], out[e], -1);
+    }
+    lol mx1 = 0, mx2 = 0;
+    for (auto e : mp[c])
+    {
+        lol v = s.mx(in[e], out[e]);
+
+        if (v >= mx1)
+        {
+            mx2 = mx1;
+            mx1 = v;
+        }
+        else if (v > mx2)
+        {
+            mx2 = v;
+        }
+    }
+
+    ans = max(ans, (mx1 + 1) * 1ll * (mx2 + 1));
+    s.add(in[c], out[c], 1);
+}
+
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    segtree s(2);
-    while (1)
+    lol t;
+    cin >> t;
+    while (t--)
     {
-        lol c;
-        cin >> c;
-        if (c == 1)
+
+        lol n;
+        cin >> n;
+        euler.clear();
+        for (lol i = 0; i <= n; i++)
         {
-            lol l, r, v;
-            cin >> l >> r >> v;
-            s.add(l, r, v);
+            mp[i].clear();
+            col[i] = -1;
+            all[i].clear();
         }
-        else
+        ans = 0;
+
+        for (lol i = 2; i <= n; i++)
         {
-            lol l, r;
-            cin >> l >> r;
-            cout << s.mx(l, r) << endl;
+            lol v;
+            cin >> v;
+            mp[v].push_back(i);
         }
+        for (lol i = 1; i <= n; i++)
+        {
+            cin >> a[i];
+        }
+        dfs(1);
+        segtree s(n);
+        dfs(1, s);
+
+        cout << ans << '\n';
     }
 
     return 0;
