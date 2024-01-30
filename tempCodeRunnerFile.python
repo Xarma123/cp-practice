@@ -1,16 +1,17 @@
-ans=0
-c=0
+import pyautogui
+import time
 
-import random
+# Pause for a few seconds to give you time to focus on the target
 
-for i in range(10000000):
-    cards=[1]*4+[2]*4
-    new=random.sample(cards,4)
-    t=random.choice(new)
-    if t==1:
-        t=random.choice(new)
-        if t==1:
-            ans+=sum(new)
-            c+=1
-print(ans/c)
+# Get the current mouse position
+original_position = pyautogui.position()
 
+# Move the mouse to the desired location
+
+time.sleep(10)
+while 1:
+    pyautogui.click()
+# Perform a left mouse click
+
+
+# Move the mouse back to the original position
