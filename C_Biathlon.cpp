@@ -1,70 +1,127 @@
 #include <bits/stdc++.h>
-#define lol long long
 using namespace std;
-vector<vector<lol>> c;
-bool check(lol x, lol y, lol i)
+#define lol long long
+pair<vector<lol>,vector<lol>> solve(lol a[], lol b[], lol n, lol m, lol k)
 {
-    return (powl(x - c[i][0], 2) + powl(y, 2) <= powl(c[i][1], 2));
+    unordered_map<lol, vector<lol>> mp;
+    vector<lol> p(),dis[n+1]
+    for (lol i = 0; i < m; i++)
+    {
+        if (i == k)
+            continue;
+        mp[a[i]].push_back(b[i]);
+        mp[b[i]].push_back(a[i]);
+    }
+    bool vis[n + 1];
+    memset(vis, false, sizeof(vis));
+    queue<lol> q;
+    q.push(1);
+    vis[1] = true;
+    lol d = 0;
+    while (!q.empty())
+    {
+        lol c = q.size();
+        while (c--)
+        {
+            lol v = q.front();
+            if (v == n)
+                return d;
+            q.pop();
+            for (auto e : mp[v])
+            {
+                if (!vis[e])
+                {
+                    vis[e] = true;
+                    q.push(e);
+                }
+            }
+        }
+        d++;
+    }
+    return -1;
 }
 int main()
 {
-    std::ios::sync_with_stdio(false);
+    ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    lol n;
-    cin >> n;
-   
-    for (lol i = 0; i < n; i++)
+    lol n, m;
+    cin >> n >> m;
+    lol a[m];
+    for (lol i = 0; i < m; i++)
     {
-        lol x, r;
-        cin >> x >> r;
-        c.push_back({x, r, i});
+        cin >> a[i];
     }
-    sort(c.begin(), c.end());
-    lol m;
     cin >> m;
-    vector<lol> ans(n, -1);
-    lol q = 0;
-    lol p = 1;
-    while (m--)
+    lol b[m];
+    for (lol i = 0; i < m; i++)
     {
-        lol x, y;
-        cin >> x >> y;
-        vector<lol> h;
-        h.push_back(x);
-        h.push_back(LONG_LONG_MIN);
-        h.push_back(LONG_LONG_MIN);
-        lol i = upper_bound(c.begin(), c.end(), h) - c.begin();
-        if (i >= 0 && i < n)
-        {
-            if (check(x, y, i))
-            {
-                if (ans[c[i][2]] == -1)
-                {
-                    q++;
-                    ans[c[i][2]] = p;
-                }
-            }
-        }
-        i--;
-        if (i >= 0 && i < n)
-        {
-            if (check(x, y, i))
-            {
-                if (ans[c[i][2]] == -1)
-                {
-                    q++;
-                    ans[c[i][2]] = p;
-                }
-            }
-        }
-        p++;
+        cin >> b[i];
     }
-    cout << q << endl;
+    map<pair<lol, lol>, lol> mp;
+    for (lol i = 0; i < m; i++)
+    {
+        mp[{a[i], b[i]}] = i;
+        mp[{b[i], a[i]}] = i;
+    }
+
+    lol d[n + 1];
+    lol p[n + 1];
+    for (lol i = 0; i <= n; i++)
+    {
+        d[i] = INT_MAX;
+        p[i] = -1;
+    }
+    d[1] = 0;
+    p[1] = 1;
     for (lol i = 0; i < n; i++)
     {
-        cout << ans[i] << " ";
+        for (lol j = 0; j < m; j++)
+        {
+            if (d[b[j]] > d[a[j]] + 1)
+            {
+                p[b[j]] = a[j];
+            }
+            if (d[a[j]] > d[b[j]] + 1)
+            {
+                p[a[j]] = b[j];
+            }
+            d[b[j]] = min(d[b[j]], d[a[j]] + 1);
+            d[a[j]] = min(d[a[j]], d[b[j]] + 1);
+        }
     }
+    vector<lol> ans;
+    if (d[n] == INT_MAX)
+    {
+        for (lol i = 0; i < m; i++)
+        {
+            ans.push_back(-1);
+        }
+    }
+    else
+    {
+        lol st = n;
+        set<lol> av;
+        while (st != 1)
+        {
+            av.insert(mp[{p[st], st}]);
+            st = p[st];
+        }
+
+        for (lol i = 0; i < m; i++)
+        {
+            if (av.count(i))
+            {
+                ans.push_back(solve(a, b, n, m, i));
+            }
+            else
+            {
+                ans.push_back(d[n]);
+            }
+        }
+    }
+    for (auto e : ans)
+        cout << e << endl;
 
     return 0;
 }
