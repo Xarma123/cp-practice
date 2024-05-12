@@ -8,34 +8,30 @@ int main()
     cout.tie(NULL);
     lol n;
     cin >> n;
-    lol a[n];
+    lol k;
+    cin >> k;
+    pair<lol, lol> a[n];
     for (lol i = 0; i < n; i++)
     {
-        cin >> a[i];
+        cin >> a[i].first >> a[i].second;
     }
-    lol p[n];
-    lol suf[n];
-    for (lol i = 0; i < n; i++)
-    {
-        p[i] = a[i];
-        if (i)
-            p[i] = __gcd(p[i], p[i - 1]);
-    }
+    sort(a, a + n);
+    multiset<lol> x;
+    lol ans = LONG_LONG_MIN;
+    lol sum = 0;
     for (lol i = n - 1; i >= 0; i--)
     {
-        suf[i] = a[i];
-        if (i < n - 1)
-            suf[i] = __gcd(suf[i], suf[i + 1]);
-    }
-    lol ans = LONG_LONG_MIN;
-    for (lol i = 0; i < n; i++)
-    {
-        lol l = 0, r = 0;
-        if (i)
-            l = p[i - 1];
-        if (i + 1 < n)
-            r = suf[i + 1];
-        ans = max(ans, __gcd(l, r));
+        x.insert(a[i].second);
+        sum += a[i].second;
+        while (x.size() > k)
+        {
+            sum -= (*x.begin());
+            x.erase(x.begin());
+        }
+        if (x.size() == k)
+        {
+            ans = max(ans, sum * 1ll * a[i].first);
+        }
     }
     cout << ans;
 

@@ -14,25 +14,27 @@ int main()
         {
             cin >> a[i];
         }
-        sort(a, a + n);
-        lol c[n];
+        lol m = 1e9 + 7;
+        lol s = 0, mxh = 0;
+        lol mx = 0;
         for (lol i = 0; i < n; i++)
         {
-            if (i == 0)
-                c[i] = a[i];
-            else
-                c[i] = c[i - 1] + a[i];
+            mxh = max(0ll, max(s + a[i], a[i]));
+            s = mxh;
+            mx = max(mx, mxh);
         }
-        lol ans = LONG_LONG_MIN;
-        for (lol i = 0; i <= k; i++)
+        lol olmx = mx;
+        for (lol i = 0; i < k; i++)
         {
-            lol l = i * 2ll - 1;
-            lol r = n - 1 - (k - i);
-            lol v = c[r];
-            if (l >= 0)
-                v -= c[l];
-            ans = max(ans, v);
+            mx = (mx * 2ll) % m;
         }
-        cout << ans << '\n';
+        for (lol i = 0; i < n; i++)
+        {
+            mx += a[i];
+            mx %= m;
+        }
+      
+        mx = ((mx - olmx) % m + m) % m;
+        cout << mx << '\n';
     }
 }

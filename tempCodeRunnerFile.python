@@ -1,17 +1,47 @@
-import pyautogui
 import time
+import pyautogui
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-# Pause for a few seconds to give you time to focus on the target
+# Path to the user data directory of the Chrome profile you want to use
+user_data_dir = "C:\\Users\\Aryan Sharma\\AppData\\Local\\Google\\Chrome\\User Data\\"  # Replace with the actual path to your profile
 
-# Get the current mouse position
-original_position = pyautogui.position()
+# Initialize Chrome webdriver with the specified profile
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
+chrome_options.add_argument("profile-directory=Profile 14")
 
-# Move the mouse to the desired location
+driver = webdriver.Chrome(options=chrome_options)
 
-time.sleep(10)
-while 1:
-    pyautogui.click()
-# Perform a left mouse click
+# Replace 'your_website_url' with the URL of your website
+driver.get('https://www.remotasks.com/en/tasks')
 
+# Function to check if the timer shows 3 minutes remaining
+def check_timer():
+    # Locate the element containing the timer text
+    timer_element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//div[contains(text(), 'Expires in')]"))  # XPath to locate the div by its text
+    )
+    
+    # Get the text of the timer
+    timer_text = timer_element.text
+    
+    # Check if '3 minutes' is in the timer text
+    if '32 minutes' in timer_text:
+        return True
+    else:
+        return False
 
-# Move the mouse back to the original position
+# Continuous loop to check the timer
+while True:
+    if check_timer():
+        # Replace coordinates with the appropriate position where you want to click
+        pyautogui.click()  # Replace x and y with your coordinates
+        break
+    time.sleep(1)
+while True:
+    time.sleep(1)
+
+# Close the browser
