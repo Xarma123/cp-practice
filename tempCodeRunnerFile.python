@@ -1,47 +1,175 @@
-import time
-import pyautogui
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+import os
+import pickle
+import base64
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
-# Path to the user data directory of the Chrome profile you want to use
-user_data_dir = "C:\\Users\\Aryan Sharma\\AppData\\Local\\Google\\Chrome\\User Data\\"  # Replace with the actual path to your profile
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from requests import HTTPError
 
-# Initialize Chrome webdriver with the specified profile
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
-chrome_options.add_argument("profile-directory=Profile 14")
+# Scopes required for Gmail API
+SCOPES = ['https://www.googleapis.com/auth/gmail.send']
 
-driver = webdriver.Chrome(options=chrome_options)
+# Path to the client secret file
+CREDENTIALS_PATH = 'C:\\Users\\Aryan Sharma\\Downloads\\client_secret_309952810300-2bmq0g7jcmar4t1sr7g653vcpljpvtiv.apps.googleusercontent.com.json'
+TOKEN_PATH = 'token.pickle'
 
-# Replace 'your_website_url' with the URL of your website
-driver.get('https://www.remotasks.com/en/tasks')
+# Load OAuth2 credentials
+def get_credentials():
+    creds = None
+    if os.path.exists(TOKEN_PATH):
+        with open(TOKEN_PATH, 'rb') as token:
+            creds = pickle.load(token)
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_PATH, SCOPES)
+            creds = flow.run_local_server(port=0)
+        with open(TOKEN_PATH, 'wb') as token:
+            pickle.dump(creds, token)
+    return creds
 
-# Function to check if the timer shows 3 minutes remaining
-def check_timer():
-    # Locate the element containing the timer text
-    timer_element = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//div[contains(text(), 'Expires in')]"))  # XPath to locate the div by its text
-    )
-    
-    # Get the text of the timer
-    timer_text = timer_element.text
-    
-    # Check if '3 minutes' is in the timer text
-    if '32 minutes' in timer_text:
-        return True
-    else:
-        return False
+# List of email addresses and names
+recipients = [
+    {"name": "DGP Mizoram", "email": "dgp-aizawl@mizoram.gov.in"}]
+# recipients = [
+#     {"name": "Sh. Sanjay Kumar Tyagi, IPS", "email": "digpint-anp@gov.in"},
+#     {"name": "V.Harshavarshana Raju, IPS", "email": "cybercrimes-cid@ap.gov.in"},
+#     {"name": "Sh. Take Ringu, IPS", "email": "takeringu@ips.gov.in"},
+#     {"name": "Sh. Debaraj Upadhaya, IPS", "email": "igp-cid@assampolice.gov.in"},
+#     {"name": "Shri. Rajesh Tripathi", "email": "cybercell-bih@nic.in"},
+#     {"name": "Sh. Raj Kumar Singh, IPS", "email": "dig-chd@nic.in"},
+#     {"name": "Himmani Khanna", "email": "cybercell-phq.cg@gov.in"},
+#     {"name": "Sh. Vikramjit Singh, IPS", "email": "digp-daman-dd@nic.in"},
+#     {"name": "Sh. B. Shanker Jaiswal", "email": "addlcp.cybertech@delhipolice.gov.in"},
+#     {"name": "Sh. Paramaditya", "email": "digpgoa@goapolice.gov.in"},
+#     {"name": "Sh. S.G. Trivedi", "email": "cc-cid@gujarat.gov.in"},
+#     {"name": "Sh. Hamid Akhtar, IPS", "email": "sp-cybercrimephq.pol@hry.gov.in"},
+#     {"name": "Sh. D. K. Chaudhary", "email": "adgp-cid-hp@nic.in"},
+#     {"name": "Sh. RR Swan", "email": "adgpcidjk@jkpolice.gov.in"},
+#     {"name": "Sh. S. Karthik", "email": "cyberps@jhpolice.gov.in"},
+#     {"name": "Smt Savitha S, I.P.S", "email": "digpnc@ksp.gov.in"},
+#     {"name": "Sh H Venkatesh, IPS", "email": "adgpcyberops.pol@kerala.gov.in"},
+#     {"name": "Sh. Deepak Digra- JKPS", "email": "aig-civl@police.ladakh.gov.in"},
+#     {"name": "Sh.Hareshwar V Swami, IPS", "email": "lak-sop@nic.in"},
+#     {"name": "Shri Yogesh Deshmukh", "email": "adg-cybercell@mppolice.gov.in"},
+#     {"name": "Sh. Sanjay  Vilas Shintre", "email": "sp.cbr-mah@gov.in"},
+#     {"name": "Sh. Ningshem Worngam", "email": "grievance.ncrp@gmail.com"},
+#     {"name": "Dr Vivek Syiem, IPS", "email": "sspcid-meg@gov.in"},
+#     {"name": "Sh Devesh Chandra Srivastava, IPS", "email": "polmizo@rediffmail.com"},
+#     {"name": "Sh. Sandeep M. Tamgadge, IPS", "email": "adgplo.ngl@gov.in"},
+#     {"name": "Sh. Arun Bothra, lPS", "email": "adgcidcb.orpol@nic.in"},
+#     {"name": "Sh. Dr. VJ Chandran", "email": "igp@py.gov.in"},
+#     {"name": "Sh. P. K. Sinha, IPS", "email": "igp.cyber.c.police@punjabpolice.gov.in"},
+#     {"name": "Shri Sharat Kaviraj", "email": "sp.cybercrime@rajpolice.gov.in"},
+#     {"name": "Sh. Abhishek Dahal", "email": "cybercrime666sk@gmail.com"},
+#     {"name": "Sh. D. Ashok Kumar", "email": "sp1-ccdtnpolice@gov.in"},
+#     {"name": "Smt. Shikha Goel, IPS", "email": "director-tscsb@tspolice.gov.in"},
+#     {"name": "Smt. Sudeshna Bhattacharyya, TPS", "email": "spscrb@tripurapolice.nic.in"},
+#     {"name": "Sh. Ayush Agarwal", "email": "spstf-uk@nic.in"},
+#     {"name": "Sh.Subhash Chandra", "email": "adg-cybercrime.lu@up.gov.in"},
+#     {"name": "Shri Akhilesh Kumar Chaturvedi, IPS", "email": "ig2@cidwestbengal.gov.in"}
+# ]
 
-# Continuous loop to check the timer
-while True:
-    if check_timer():
-        # Replace coordinates with the appropriate position where you want to click
-        pyautogui.click()  # Replace x and y with your coordinates
-        break
-    time.sleep(1)
-while True:
-    time.sleep(1)
+# Email account credentials
+your_email = "aryanofficials6@gmail.com"
 
-# Close the browser
+# Email subject and body template
+subject = "Urgent: Request for Assistance to Resolve partial Frozen Bank Account Issue"
+body_template = """
+<html>
+<head></head>
+<body>
+<p>Respected {name},</p>
+<p>I hope this message finds you well.</p>
+<p>I am writing to respectfully bring to your attention a critical issue regarding my bank account, which has been frozen following actions initiated by the Ministry of Home Affairs. This situation has caused considerable inconvenience and distress, and I humbly seek your esteemed assistance to resolve the matter.</p>
+
+<p><strong>Details of the Situation:</strong></p>
+<ul>
+<li><strong>Account Holder Name:</strong> Aryan Sharma</li>
+<li><strong>Date of Issue:</strong> 01-06-2024</li>
+<li><strong>Bank Name:</strong> HDFC Bank</li>
+<li><strong>Branch:</strong> Ward No 1, Shakuntla Complex Ramnik Vihar Kathua - 184101</li>
+<li><strong>Case Reference Numbers and Held Amounts:</strong>
+    <ul>
+    <li><strong>Cyber Case - n20743 - 31905240077441:</strong> ₹43,736.00 (Held by HDFC Bank)</li>
+    <li><strong>MHA-33705240029622-Contact-V21471:</strong> ₹59,468.00 (Held by HDFC Bank)</li>
+    </ul>
+</li>
+<li><strong>Total Amount Held:</strong> ₹103,204.00</li>
+<li><strong>As on Date:</strong> 5 Jun 2024</li>
+</ul>
+
+<p><strong>Background:</strong></p>
+<p>I am employed by Scale AI, a globally recognized company known for its contributions to artificial intelligence and data annotation. As a software developer, my role involves significant responsibilities in various innovative projects. I can provide my offer letter and other relevant employment documentation to verify my association with Scale AI.</p>
+
+<p><strong>Nature of Transactions:</strong></p>
+<p>Initially, my salary was paid through PayPal, an RBI-approved platform, and I faced no issues with these transactions. Recently, I switched to AirTM, another legitimate online platform that facilitates currency exchanges. On this platform, I engage in peer-to-peer (P2P) transactions with verified cashiers to convert USD Coin (USDC) to Indian Rupees (INR).</p>
+
+<p>I would like to emphasize that my source of income is entirely legitimate. All my earnings are from my employment with Scale AI, and I have been diligently adhering to all legal and regulatory requirements. I can provide detailed transaction records from PayPal and AirTM to demonstrate the transparency and legitimacy of my financial activities.</p>
+
+<p><strong>Issue:</strong></p>
+<p>Out of the four transactions I conducted via AirTM, two were flagged, leading to my bank account being frozen by the Ministry of Home Affairs. The specific transactions in question occurred on 29 May 2024, involving amounts of ₹43,736.00 and ₹59,468.00 respectively. Consequently, the funds from these transactions were held, and I am unable to perform debit transactions, though credit transactions are still functional. I was not aware that the peer, who was supposedly a verified cashier on AirTM, would cause such an issue.</p>
+
+<p><strong>Requested Action:</strong></p>
+<p>I kindly and respectfully request the following actions be taken at your earliest convenience:</p>
+<ol>
+<li><strong>Review and Clarify the Issue:</strong> Please provide detailed reasons for the freezing of my account.</li>
+<li><strong>Unfreeze My Account:</strong> Given the legitimate nature of these transactions, I request that the restrictions on my account be lifted.</li>
+<li><strong>Provide Guidance:</strong> Advise on any further documentation or steps needed from my end to resolve this matter swiftly.</li>
+</ol>
+
+<p><strong>Supporting Documents:</strong></p>
+<p>I am prepared to provide the following documentation to support my case:</p>
+<ul>
+<li>Employment verification from Scale AI, including my offer letter.</li>
+<li>Detailed transaction records from AirTM.</li>
+<li>Any additional information required for clarification.</li>
+</ul>
+
+<p><strong>Contact Information:</strong></p>
+<p>Please contact me at your earliest convenience to discuss this matter further. You can reach me via email at aryanofficials6@gmail.com or by phone at 9682350140.</p>
+
+<p>I deeply appreciate your prompt attention to this matter and am hopeful for a swift resolution. Thank you for your cooperation and understanding.</p>
+
+<p>Respectfully,</p>
+
+<p>Aryan Sharma<br>
+Luxmi Vihar, Near Radio Station<br>
+Kathua, Jammu and Kashmir, 184101<br>
+9682350140<br>
+aryanofficials6@gmail.com</p>
+</body>
+</html>
+"""
+
+# Send an email using the Gmail API
+def send_email(recipient, subject, body):
+    credentials = get_credentials()
+    service = build('gmail', 'v1', credentials=credentials)
+
+    msg = MIMEMultipart()
+    msg['From'] = your_email
+    msg['To'] = recipient['email']
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'html'))
+
+    raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
+    message = {'raw': raw}
+
+    try:
+        sent_message = service.users().messages().send(userId='me', body=message).execute()
+        print(f"Message Id: {sent_message['id']}")
+    except HTTPError as error:
+        print(f"An error occurred: {error}")
+        sent_message = None
+    return sent_message
+
+if __name__ == "__main__":
+    for recipient in recipients:
+        body = body_template.format(name=recipient['name'])
+        send_email(recipient, subject, body)
